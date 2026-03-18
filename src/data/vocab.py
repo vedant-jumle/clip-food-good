@@ -9,9 +9,7 @@ def build_vocab(
     top_n: Optional[int] = None,
     min_freq: int = 1,
     exclude: Optional[Iterable[str]] = None,
-    specials: Optional[List[str]] = None,
 ) -> List[str]:
-    
     exclude_set = set(exclude or [])
     counter = Counter()
 
@@ -26,6 +24,4 @@ def build_vocab(
     if top_n is not None:
         items = items[:top_n]
 
-    vocab = list(specials or [])
-    vocab.extend(token for token, _ in items)
-    return vocab
+    return [token for token, _ in items]
