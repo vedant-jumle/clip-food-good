@@ -1,3 +1,5 @@
 torch
 torchvision
 Pillow
+open_clip_torch
+open_clip_torch
