@@ -124,7 +124,7 @@ def _dummy_recipes(image_path: Path) -> list[dict[str, Any]]:
 def smoke_test() -> None:
     logging.basicConfig(level=logging.INFO)
 
-    images_root = Path("data/recipe1M")
+    images_root = Path("data/recipe1m/0")
     image_path = _first_recipe1m_image(images_root)
     if image_path is None:
         raise FileNotFoundError(f"No .jpg files found under {images_root}")
