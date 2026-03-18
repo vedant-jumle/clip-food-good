@@ -1,16 +1,22 @@
 from recipe1m import load_recipes
 from vocab import build_vocab
+from pathlib import Path
 
 recipes = load_recipes(
     det_ingrs_path="../data/recipe1m/det_ingrs.json",
     layer1_path="../data/recipe1m/layer1.json",
     image_root="../data/recipe1m/0",
     partition="train",
-    require_images=False,
+    require_images=True,
 )
 
 print("Loaded recipes:", len(recipes))
 print(recipes[0])
+
+if recipes:
+    print(recipes[0])
+    print("image path:", recipes[0]["image_path"])
+    print("exists:", Path(recipes[0]["image_path"]).exists())
 
 vocab = build_vocab(
     recipes,

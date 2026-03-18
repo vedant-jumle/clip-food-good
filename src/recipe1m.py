@@ -6,28 +6,24 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 def read_json(path: str | Path) -> Any:
+    path = Path(path)
     with open(path, "r", encoding="utf-8") as file:
         return json.load(file)
     
 def norm_ing(text: str) -> str:
     text = text.lower().strip()
-    
     text = re.sub(r"\([^)]*\)", " ", text)
     text = re.sub(r"\s*-\s*", "-", text)
     text = re.sub(r"\s+", " ", text).strip()
-    
     return text
 
 def is_valid_ing(text: str) -> bool:
     if not text:
         return False
-    
     if text.startswith("makes about"):
         return False
-    
     if not re.search(r"[a-zA-z]", text):
         return False
-    
     return True
 
 def extract_ings(det_entry: Dict[str, Any]) -> List[str]:
@@ -77,22 +73,46 @@ def recipe_id_to_image_path(image_root: str | Path, recipe_id: str) -> Optional[
 
     if len(recipe_id) < 3:
         return None
-
-    candidate = image_root / recipe_id[0] / recipe_id[1] / recipe_id[2] / f"{recipe_id}.jpg"
-    if candidate.exists():
-        return str(candidate)
-
-    jpeg_candidate = image_root / recipe_id[0] / recipe_id[1] / recipe_id[2] / f"{recipe_id}.jpeg"
-    if jpeg_candidate.exists():
-        return str(jpeg_candidate)
-
-    png_candidate = image_root / recipe_id[0] / recipe_id[1] / recipe_id[2] / f"{recipe_id}.png"
-    if png_candidate.exists():
-        return str(png_candidate)
-
+    
+    exts = (".jpg", ".jpeg", ".png")
+    
+    for root in candidate_img_roots(image_root):
+        base = root / recipe_id[0] / recipe_id[1] / recipe_id[2]
+        for ext in exts:
+            candidate = base / f"{recipe_id}{ext}"
+            if candidate.exists():
+                return str(candidate)
+            
     return None
 
-def candidate_img_paths(image_root: Path, image_id: str) -> List[Path]:
+
+def candidate_img_roots(image_root: str | Path) -> List[Path]:
+    root = Path(image_root)
+    roots: List[Path] = []
+
+    if root.exists():
+        roots.append(root)
+
+    shard0 = root / "0"
+    if shard0.exists():
+        roots.append(shard0)
+
+    if root.exists() and root.is_dir():
+        for child in root.iterdir():
+            if child.is_dir() and len(child.name) == 1:
+                roots.append(child)
+
+    seen = set()
+    uniq: List[Path] = []
+    for r in roots:
+        key = str(r.resolve()) if r.exists() else str(r)
+        if key not in seen:
+            seen.add(key)
+            uniq.append(r)
+
+    return uniq
+
+def candidate_img_paths(image_root: Path, image_id: str | Path) -> List[Path]:
     image_id = str(image_id)
     candidates: List[Path] = []
 
