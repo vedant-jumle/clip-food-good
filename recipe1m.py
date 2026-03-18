@@ -40,9 +40,9 @@ def extract_ings(det_entry: Dict[str, Any]) -> List[str]:
         else:
             continue
         
-    text = norm_ing(text)
-    if is_valid_ing(text):
-        result.append(text)
+        text = norm_ing(text)
+        if is_valid_ing(text):
+            result.append(text)
         
     return result
 
@@ -70,15 +70,27 @@ def index_layer1(layer1_path: str | Path) -> Dict[str, List[str]]:
         
     return index
 
-def candidate_img_paths(image_root: Path, image_id, str) -> List[Path]:
+def candidate_img_paths(image_root: Path, image_id: str) -> List[Path]:
     image_id = str(image_id)
     
     candidates = []
     
-    if len(image_id) >=4:
-        candidates.append(image_root / image_id[0] / image_id[1] / image_id[2] / image_id[3] / f"{image_id}.jpg")
-        
-    candidates.append(image_root / f"{image_root}.jpg")
+    # 3-level layout: root/9/5/0/0950a3fa0d.jpg
+    if len(image_id) >= 3:
+        candidates.append(
+            image_root / image_id[0] / image_id[1] / image_id[2] / f"{image_id}.jpg"
+        )
+        candidates.append(
+            image_root / image_id[0] / image_id[1] / image_id[2] / f"{image_id}.jpeg"
+        )
+        candidates.append(
+            image_root / image_id[0] / image_id[1] / image_id[2] / f"{image_id}.png"
+        )
+
+    # fallback flat layout
+    candidates.append(image_root / f"{image_id}.jpg")
+    candidates.append(image_root / f"{image_id}.jpeg")
+    candidates.append(image_root / f"{image_id}.png")
     
     return candidates
 
@@ -98,13 +110,13 @@ def resolve_img_paths(images: List[Any], image_root: str | Path) -> List[str]:
             continue
         
         found = None
-        for candidate in candidate_img_paths:
+        for candidate in candidate_img_paths(image_root, image_id):
             if candidate.exists():
                 found = candidate
                 break
             
         if found is not None:
-            resolved.appens(str(found))
+            resolved.append(str(found))
             
     return resolved
 

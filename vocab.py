@@ -11,7 +11,6 @@ def build_vocab(
     exclude: Optional[Iterable[str]] = None,
     specials: Optional[List[str]] = None,
 ) -> Dict[str, int]:
-
     exclude = set(exclude or [])
     counter = Counter()
 
@@ -20,12 +19,7 @@ def build_vocab(
             if ing not in exclude:
                 counter[ing] += 1
 
-    items = [
-        (token, freq)
-        for token, freq in counter.items()
-        if freq >= min_freq
-    ]
-
+    items = [(token, freq) for token, freq in counter.items() if freq >= min_freq]
     items.sort(key=lambda x: (-x[1], x[0]))
 
     if top_n is not None:
