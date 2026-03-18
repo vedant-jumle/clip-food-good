@@ -13,6 +13,7 @@ def norm_ing(text: str) -> str:
     text = text.lower().strip()
     
     text = re.sub(r"\([^)]*\)", " ", text)
+    text = re.sub(r"\s*-\s*", "-", text)
     text = re.sub(r"\s+", " ", text).strip()
     
     return text
@@ -65,38 +66,50 @@ def index_layer1(layer1_path: str | Path) -> Dict[str, List[str]]:
         index[recipe_id] = {
             "title": entry.get("title", "").strip(),
             "partition": entry.get("partition"),
-            "images": entry.get("images", []),
         }
         
     return index
 
+def recipe_id_to_image_path(image_root: str | Path, recipe_id: str) -> Optional[str]:
+    
+    image_root = Path(image_root)
+    recipe_id = str(recipe_id)
+
+    if len(recipe_id) < 3:
+        return None
+
+    candidate = image_root / recipe_id[0] / recipe_id[1] / recipe_id[2] / f"{recipe_id}.jpg"
+    if candidate.exists():
+        return str(candidate)
+
+    jpeg_candidate = image_root / recipe_id[0] / recipe_id[1] / recipe_id[2] / f"{recipe_id}.jpeg"
+    if jpeg_candidate.exists():
+        return str(jpeg_candidate)
+
+    png_candidate = image_root / recipe_id[0] / recipe_id[1] / recipe_id[2] / f"{recipe_id}.png"
+    if png_candidate.exists():
+        return str(png_candidate)
+
+    return None
+
 def candidate_img_paths(image_root: Path, image_id: str) -> List[Path]:
     image_id = str(image_id)
-    
-    candidates = []
-    
-    # 3-level layout: root/9/5/0/0950a3fa0d.jpg
-    if len(image_id) >= 3:
-        candidates.append(
-            image_root / image_id[0] / image_id[1] / image_id[2] / f"{image_id}.jpg"
-        )
-        candidates.append(
-            image_root / image_id[0] / image_id[1] / image_id[2] / f"{image_id}.jpeg"
-        )
-        candidates.append(
-            image_root / image_id[0] / image_id[1] / image_id[2] / f"{image_id}.png"
-        )
+    candidates: List[Path] = []
 
-    # fallback flat layout
+    if len(image_id) >= 3:
+        base = image_root / image_id[0] / image_id[1] / image_id[2]
+        candidates.append(base / f"{image_id}.jpg")
+        candidates.append(base / f"{image_id}.jpeg")
+        candidates.append(base / f"{image_id}.png")
+
     candidates.append(image_root / f"{image_id}.jpg")
     candidates.append(image_root / f"{image_id}.jpeg")
     candidates.append(image_root / f"{image_id}.png")
-    
+
     return candidates
 
-def resolve_img_paths(images: List[Any], image_root: str | Path) -> List[str]:
+def resolve_first_img_path(images: List[Any], image_root: str | Path) -> Optional[str]:
     image_root = Path(image_root)
-    resolved: List[str] = []
     
     for img in images:
         if isinstance(img, dict):
@@ -105,20 +118,15 @@ def resolve_img_paths(images: List[Any], image_root: str | Path) -> List[str]:
             image_id = img
         else:
             continue
-        
+
         if not image_id:
             continue
-        
-        found = None
-        for candidate in candidate_img_paths(image_root, image_id):
+
+        for candidate in candidate_img_paths(image_root, str(image_id)):
             if candidate.exists():
-                found = candidate
-                break
-            
-        if found is not None:
-            resolved.append(str(found))
-            
-    return resolved
+                return str(candidate)
+
+    return None
 
 def load_recipes(
     det_ingrs_path: str | Path,
@@ -144,9 +152,9 @@ def load_recipes(
         if not ingredients:
             continue
 
-        image_paths = resolve_img_paths(meta["images"], image_root)
+        image_path = recipe_id_to_image_path(image_root, recipe_id)
 
-        if require_images and not image_paths:
+        if require_images and image_path is None:
             continue
 
         recipes.append(
@@ -155,7 +163,7 @@ def load_recipes(
                 "title": meta["title"],
                 "partition": meta["partition"],
                 "ingredients": ingredients,
-                "image_paths": image_paths,
+                "image_paths": image_path,
             }
         )
 

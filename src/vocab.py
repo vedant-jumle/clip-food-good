@@ -1,22 +1,23 @@
 from __future__ import annotations
 
 from collections import Counter
-from typing import Dict, Iterable, List, Optional
+from typing import Iterable, List, Optional, Sequence
 
 
 def build_vocab(
-    recipes: List[dict],
+    recipes: Sequence[dict],
     top_n: Optional[int] = None,
     min_freq: int = 1,
     exclude: Optional[Iterable[str]] = None,
     specials: Optional[List[str]] = None,
-) -> Dict[str, int]:
-    exclude = set(exclude or [])
+) -> List[str]:
+    
+    exclude_set = set(exclude or [])
     counter = Counter()
 
     for recipe in recipes:
         for ing in recipe.get("ingredients", []):
-            if ing not in exclude:
+            if ing and ing not in exclude_set:
                 counter[ing] += 1
 
     items = [(token, freq) for token, freq in counter.items() if freq >= min_freq]
@@ -25,5 +26,6 @@ def build_vocab(
     if top_n is not None:
         items = items[:top_n]
 
-    vocab_tokens = list(specials or []) + [token for token, _ in items]
-    return {token: idx for idx, token in enumerate(vocab_tokens)}
+    vocab = list(specials or [])
+    vocab.extend(token for token, _ in items)
+    return vocab
