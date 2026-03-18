@@ -72,6 +72,21 @@ def index_layer1(layer1_path: str | Path) -> Dict[str, Any]:
     return index
 
 
+def index_layer2(layer2_path: str | Path) -> Dict[str, List[str]]:
+    data = read_json(layer2_path)
+    index: Dict[str, List[str]] = {}
+    for entry in data:
+        recipe_id = str(entry["id"])
+        image_ids = []
+        for img in entry.get("images", []):
+            img_id = img.get("id", "") if isinstance(img, dict) else str(img)
+            stem = img_id.replace(".jpg", "").replace(".jpeg", "").replace(".png", "")
+            if stem:
+                image_ids.append(stem)
+        index[recipe_id] = image_ids
+    return index
+
+
 def build_image_index(image_root: str | Path) -> Dict[str, str]:
     """Scan image_root once and return a dict mapping image stem -> full path."""
     index: Dict[str, str] = {}
@@ -84,12 +99,14 @@ def build_image_index(image_root: str | Path) -> Dict[str, str]:
 def load_recipes(
     det_ingrs_path: str | Path,
     layer1_path: str | Path,
+    layer2_path: str | Path,
     image_root: str | Path,
     partition: Optional[str] = None,
     require_images: bool = True,
 ) -> List[Dict[str, Any]]:
     det_index = index_det_ingrs(det_ingrs_path)
     layer_index = index_layer1(layer1_path)
+    layer2_index = index_layer2(layer2_path)
     image_index = build_image_index(image_root)
 
     recipes: List[Dict[str, Any]] = []
@@ -106,7 +123,11 @@ def load_recipes(
         if not ingredients:
             continue
 
-        image_path = image_index.get(recipe_id)
+        image_path = None
+        for img_id in layer2_index.get(recipe_id, []):
+            if img_id in image_index:
+                image_path = image_index[img_id]
+                break
 
         if require_images and image_path is None:
             continue
