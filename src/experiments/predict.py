@@ -6,10 +6,10 @@ def compute_scores(image_embeddings: torch.Tensor, text_embeddings: torch.Tensor
 
 def predict_topk(scores: torch.Tensor, k: int = 5) -> torch.Tensor:
        if k <= 0:
-           raise ValueError(f"The value of k, {k}, must be larger than 0.")
+           raise ValueError(f"k must be positive, got {k}")
        
        if scores.ndim != 2:
-           raise ValueError(f"Scores must have shape (N, V), got {tuple(scores.shape)}")
+           raise ValueError(f"scores must have shape (N, V), got {tuple(scores.shape)}")
        
        vocab_size = scores.size(1)
        if k > vocab_size:

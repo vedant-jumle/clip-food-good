@@ -1,6 +1,6 @@
 import sys
-from recipe1m import load_recipes, index_det_ingrs, index_layer1, index_layer2, build_image_index
-from vocab import build_vocab
+from .recipe1m import load_recipes, index_det_ingrs, index_layer1, index_layer2, build_image_index
+from .vocab import build_vocab
 
 DET_INGRS = "data/recipe1m/det_ingrs.json"
 LAYER1 = "data/recipe1m/layer1.json"

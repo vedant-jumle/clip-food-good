@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import List
 
-    
+
 prompt_templates = {
         "A": "{ingredient}",
         "B": "a dish containing {ingredient}",
@@ -11,7 +11,7 @@ prompt_templates = {
 
 def make_prompts(vocab: List[str], prompt_type: str) -> List[str]:
     if prompt_type not in prompt_templates:
-        raise ValueError(f"Prompt type {prompt_type} must be a valid prompt template!")
+        raise ValueError(f"Unknown prompt_type '{prompt_type}'. Expected one of {list(prompt_templates.keys())}.")
     
     template = prompt_templates[prompt_type]
     return [template.format(ingredient=ingredient) for ingredient in vocab]

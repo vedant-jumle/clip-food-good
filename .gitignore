@@ -206,6 +206,8 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-.claude/
-data/
-Dataset Access Request Response.eml
+
+# everything else
+data/recipe1m/
+data/food-101/
+src/experiments/tests
