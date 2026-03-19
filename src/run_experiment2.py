@@ -83,7 +83,7 @@ def evaluate_prompt_type(
     clip: CLIPWrapper,
     vocab: list[str],
     prompt_type: str,
-) -> tuple[float, float, float]:
+) -> tuple[float, float, float, int]:
     prompts = make_prompts(vocab, prompt_type)
     text_embeddings = clip.encode_text(prompts)
 
@@ -104,6 +104,7 @@ def evaluate_prompt_type(
         precision_at_k(preds, labels, k=5),
         recall_at_k(preds, labels, k=5),
         f1_at_k(preds, labels, k=5),
+        labels.size(0),
     )
 
 
@@ -112,15 +113,20 @@ def main() -> None:
     clip = CLIPWrapper()
 
     print("=== Experiment 2: Prompt Engineering ===")
-    print(f"Recipes evaluated: {len(recipes)}")
     print(f"Vocab size: {len(vocab)}")
     print()
     print("Prompt  | P@5   | R@5   | F1@5")
     print("--------|-------|-------|------")
 
+    n_evaluated = None
     for prompt_type in PROMPT_TYPES:
-        precision, recall, f1 = evaluate_prompt_type(loader, clip, vocab, prompt_type)
+        precision, recall, f1, n = evaluate_prompt_type(loader, clip, vocab, prompt_type)
+        if n_evaluated is None:
+            n_evaluated = n
         print(f"{prompt_type:<7} | {precision:.2f}  | {recall:.2f}  | {f1:.2f}")
+
+    print()
+    print(f"Recipes evaluated: {n_evaluated}")
 
 
 if __name__ == "__main__":
