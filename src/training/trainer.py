@@ -6,6 +6,7 @@ import torch
 import torch.nn.functional as F
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
+from tqdm.auto import tqdm
 
 from src.models.clip_wrapper import CLIPWrapper
 from src.models.ingredient_head import IngredientHead
@@ -58,7 +59,8 @@ def train(
         ) 
 
     epoch_losses: List[float] = []
-    for epoch in range(epochs):
+    epoch_bar = tqdm(range(epochs), desc=f"Training [{strategy}]")
+    for epoch in epoch_bar:
         head.train()
 
         if strategy == "head_only":
@@ -68,7 +70,7 @@ def train(
 
         running_loss = 0.0
         num_batches = 0
-        for batch in dataloader:
+        for batch in tqdm(dataloader, desc=f"Epoch {epoch + 1}", leave=False):
             images = batch["image"].to(device)
             labels = batch["labels"].to(device)
 
@@ -91,7 +93,6 @@ def train(
 
         epoch_loss = running_loss / num_batches if num_batches > 0 else 0.0
         epoch_losses.append(epoch_loss)
-
-        print(f"Epoch {epoch + 1}/{epochs} - Loss: {epoch_loss:.4f}")
+        epoch_bar.set_postfix(loss=f"{epoch_loss:.4f}")
 
     return epoch_losses

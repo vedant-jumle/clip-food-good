@@ -5,6 +5,7 @@ from pathlib import Path
 
 import torch
 from torch.utils.data import DataLoader
+from tqdm.auto import tqdm
 
 if __package__ in (None, ""):
     sys.path.append(str(Path(__file__).resolve().parents[1]))
@@ -12,6 +13,8 @@ if __package__ in (None, ""):
 from src.data.dataset import Recipe1MDataset
 from src.data.recipe1m import load_recipes
 from src.data.vocab import build_vocab
+import torch.nn.functional as F
+
 from src.experiments.metrics import f1_at_k, precision_at_k, recall_at_k
 from src.experiments.predict import compute_scores, predict_topk
 from src.experiments.prompts import make_prompts
@@ -46,7 +49,7 @@ NON_VISUAL = {
     "vinegar",
 }
 
-PROMPT_TYPES = ["A", "B", "C", "D"]
+PROMPT_TYPES = ["A", "B", "C", "D", "E", "F", "G", "H", "ENS4", "ENS7"]
 BATCH_SIZE = 32
 TOP_K = 5
 
@@ -78,19 +81,51 @@ def build_test_loader() -> tuple[list[dict], list[str], DataLoader]:
     return recipes, vocab, loader
 
 
+def make_ensemble_embeddings(vocab: list[str], clip: CLIPWrapper, types: list[str]) -> torch.Tensor:
+    embeddings = []
+    for pt in types:
+        prompts = make_prompts(vocab, pt)
+        embeddings.append(clip.encode_text(prompts))  # (V, D)
+    ensemble = torch.stack(embeddings).mean(dim=0)    # (V, D)
+    return F.normalize(ensemble, dim=-1)
+
+
+# ENS4 = original A+B+C+D, ENS7 = B+C+D+E+F+G+H (no single-word A, no "fresh X")
+ENSEMBLE_GROUPS = {
+    "ENS4": ["A", "B", "C", "D"],
+    "ENS7": ["B", "C", "D", "E", "F", "G", "H"],
+}
+
+PROMPT_LABELS = {
+    "A": "A  (single word)",
+    "B": "B  (dish containing X)",
+    "C": "C  (meal with X ingr.)",
+    "D": "D  (visible X)",
+    "E": "E  (food photo of X)",
+    "F": "F  (recipe ingr: X)",
+    "G": "G  (this food contains X)",
+    "H": "H  (fresh X)",
+    "ENS4": "ENS4 (A+B+C+D)",
+    "ENS7": "ENS7 (B-H, no A)",
+}
+
+
 def evaluate_prompt_type(
     loader: DataLoader,
     clip: CLIPWrapper,
     vocab: list[str],
     prompt_type: str,
 ) -> tuple[float, float, float, int]:
-    prompts = make_prompts(vocab, prompt_type)
-    text_embeddings = clip.encode_text(prompts)
+    if prompt_type in ENSEMBLE_GROUPS:
+        text_embeddings = make_ensemble_embeddings(vocab, clip, ENSEMBLE_GROUPS[prompt_type])
+    else:
+        prompts = make_prompts(vocab, prompt_type)
+        text_embeddings = clip.encode_text(prompts)
 
     all_predictions: list[torch.Tensor] = []
     all_labels: list[torch.Tensor] = []
 
-    for batch in loader:
+    for batch in tqdm(loader, desc=f"Prompt {prompt_type}", leave=False):
         image_embeddings = clip.encode_image(batch["image"])
         scores = compute_scores(image_embeddings, text_embeddings)
         predictions = predict_topk(scores, k=TOP_K)
@@ -112,21 +147,22 @@ def main() -> None:
     recipes, vocab, loader = build_test_loader()
     clip = CLIPWrapper()
 
-    print("=== Experiment 2: Prompt Engineering ===")
-    print(f"Vocab size: {len(vocab)}")
-    print()
-    print("Prompt  | P@5   | R@5   | F1@5")
-    print("--------|-------|-------|------")
+    tqdm.write("=== Experiment 2: Prompt Engineering ===")
+    tqdm.write(f"Vocab size: {len(vocab)}")
+    tqdm.write("")
+    tqdm.write(f"{'Prompt':<26} | P@5   | R@5   | F1@5")
+    tqdm.write(f"{'-'*26}-|-------|-------|------")
 
     n_evaluated = None
-    for prompt_type in PROMPT_TYPES:
+    for prompt_type in tqdm(PROMPT_TYPES, desc="Prompt types"):
         precision, recall, f1, n = evaluate_prompt_type(loader, clip, vocab, prompt_type)
         if n_evaluated is None:
             n_evaluated = n
-        print(f"{prompt_type:<7} | {precision:.2f}  | {recall:.2f}  | {f1:.2f}")
+        label = PROMPT_LABELS.get(prompt_type, prompt_type)
+        tqdm.write(f"{label:<26} | {precision:.2f}  | {recall:.2f}  | {f1:.2f}")
 
-    print()
-    print(f"Recipes evaluated: {n_evaluated}")
+    tqdm.write("")
+    tqdm.write(f"Recipes evaluated: {n_evaluated}")
 
 
 if __name__ == "__main__":

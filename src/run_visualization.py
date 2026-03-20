@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import torch
 from PIL import Image
+from tqdm.auto import tqdm
 
 from data.recipe1m import load_recipes
 from data.vocab import build_vocab
@@ -82,7 +83,7 @@ def main() -> None:
     transform = default_transform()
     samples = recipes[:N_SAMPLES]
 
-    for recipe in samples:
+    for recipe in tqdm(samples, desc="Visualizing recipes"):
         recipe_id = recipe["id"]
         image_path = recipe["image_path"]
 

@@ -4,3 +4,4 @@ Pillow
 open_clip_torch
 matplotlib
 numpy
+tqdm

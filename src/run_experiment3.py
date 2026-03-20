@@ -1,9 +1,14 @@
 from __future__ import annotations
 
+import sys
 from typing import Dict
 from pathlib import Path
 import torch
 from torch.utils.data import DataLoader
+from tqdm.auto import tqdm
+
+if __package__ in (None, ""):
+    sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from src.data.dataset import Recipe1MDataset
 from src.data.recipe1m import load_recipes
@@ -69,7 +74,7 @@ def evaluate_zero_shot(
     all_preds = []
     all_labels = []
 
-    for batch in dataloader:
+    for batch in tqdm(dataloader, desc="Zero-shot eval", leave=False):
         images = batch["image"].to(device)
         labels = batch["labels"]
 
@@ -104,7 +109,7 @@ def evaluate_head_model(
     all_preds = []
     all_labels = []
 
-    for batch in dataloader:
+    for batch in tqdm(dataloader, desc="Evaluating head", leave=False):
         images = batch["image"].to(device)
         labels = batch["labels"]
 
