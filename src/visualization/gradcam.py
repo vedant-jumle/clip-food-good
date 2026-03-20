@@ -32,7 +32,7 @@ class GradCAM:
         last_block = self.clip.model.visual.transformer.resblocks[-1]
 
         def forward_hook(module, input, output):
-            self._activations["value"] = output.detach()
+            self._activations["value"] = output
 
         def backward_hook(module, grad_input, grad_output):
             self._gradients["value"] = grad_output[0].detach()
@@ -67,8 +67,7 @@ class GradCAM:
         # encode image WITH grad so backward pass works
         self.clip.model.zero_grad()
         with torch.enable_grad():
-            image_req = image.requires_grad_(False)
-            raw_emb = self.clip.model.encode_image(image_req)          # (1, D)
+            raw_emb = self.clip.model.encode_image(image)              # (1, D)
             image_emb = F.normalize(raw_emb, dim=-1)
             similarity = (image_emb * text_emb).sum()
             similarity.backward()
@@ -81,10 +80,8 @@ class GradCAM:
         patch_act = activations[1:]   # (49, 1, D)
         patch_grad = gradients[1:]    # (49, 1, D)
 
-        # weight activations by mean gradient across feature dim
-        weights = patch_grad.mean(dim=-1)          # (49, 1)
-        cam = (weights * patch_act.mean(dim=-1))   # (49, 1)
-        cam = cam.squeeze(-1)                       # (49,)
+        # weight activations channel-wise by gradients, then average
+        cam = (patch_grad * patch_act).mean(dim=-1).squeeze(-1)  # (49,)
 
         # ReLU and reshape to spatial grid
         cam = F.relu(cam)
