@@ -72,16 +72,16 @@ class GradCAM:
             similarity = (image_emb * text_emb).sum()
             similarity.backward()
 
-        # activations shape: (N_tokens, 1, D) where N_tokens = 1 + 7*7 = 50
-        activations = self._activations["value"]  # (50, 1, D)
-        gradients = self._gradients["value"]       # (50, 1, D)
+        # activations shape: (1, N_tokens, D) where N_tokens = 1 + 7*7 = 50
+        activations = self._activations["value"]  # (1, 50, D)
+        gradients = self._gradients["value"]       # (1, 50, D)
 
-        # drop CLS token, keep patch tokens → (49, 1, D)
-        patch_act = activations[1:]   # (49, 1, D)
-        patch_grad = gradients[1:]    # (49, 1, D)
+        # drop CLS token, keep patch tokens → (1, 49, D)
+        patch_act = activations[:, 1:, :]   # (1, 49, D)
+        patch_grad = gradients[:, 1:, :]    # (1, 49, D)
 
-        # weight activations channel-wise by gradients, then average
-        cam = (patch_grad * patch_act).mean(dim=-1).squeeze(-1)  # (49,)
+        # weight activations channel-wise by gradients, then average over D
+        cam = (patch_grad * patch_act).mean(dim=-1).squeeze(0)  # (49,)
 
         # ReLU and reshape to spatial grid
         cam = F.relu(cam)
@@ -97,7 +97,7 @@ class GradCAM:
         ).squeeze()                                 # (224, 224)
 
         # normalize to [0, 1]
-        cam = cam.cpu().numpy()
+        cam = cam.detach().cpu().numpy()
         cam_min, cam_max = cam.min(), cam.max()
         if cam_max > cam_min:
             cam = (cam - cam_min) / (cam_max - cam_min)
