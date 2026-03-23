@@ -14,7 +14,6 @@ from src.models.clip_wrapper import CLIPWrapper
 from src.models.ingredient_head import IngredientHead
 from src.models.lora import apply_lora_to_clip, get_lora_parameters
 
-
 ##### Helper functions #####
 
 def build_texts(labels: torch.Tensor, vocab: list[str]) -> list[str]:
@@ -24,6 +23,7 @@ def build_texts(labels: torch.Tensor, vocab: list[str]) -> list[str]:
         ingredients = [vocab[i] for i in indices]
         texts.append("ingredients: " + ", ".join(ingredients) if ingredients else "food")
     return texts
+
 
 
 ##### Main functions #####
@@ -111,5 +111,67 @@ def train(
         epoch_loss = running_loss / num_batches if num_batches > 0 else 0.0
         epoch_losses.append(epoch_loss)
         epoch_bar.set_postfix(loss=f"{epoch_loss:.4f}")
+
+    return epoch_losses
+
+def train_contrastive(
+    clip: CLIPWrapper,
+    dataloader: DataLoader,
+    vocab: list[str],
+    epochs: int = 5,
+    lr: float = 1e-4,
+    rank: int = 32,
+    alpha: float = 1.0,
+    device: str = "cuda",
+) -> list[float]:
+    clip.model.to(device)
+
+    apply_lora_to_clip(clip.model, rank=rank, alpha=alpha)
+    lora_params = list(get_lora_parameters(clip.model))
+
+    if len(lora_params) == 0:
+        raise ValueError("No LoRA parameters found!")
+
+    optimizer = AdamW(lora_params, lr=lr)
+    criterion = ClipLoss()
+
+    epoch_losses: list[float] = []
+
+    clip.model.train()
+
+    epoch_bar = tqdm(range(epochs), desc="Contrastive training", leave=True)
+    for epoch in epoch_bar:
+        running_loss = 0.0
+        num_batches = 0
+
+        batch_bar = tqdm(dataloader, desc=f"Epoch {epoch + 1}/{epochs}", leave=False)
+        for batch in batch_bar:
+            images = batch["image"].to(device)
+            labels = batch["labels"]  # CPU; dataloader never puts labels on GPU
+
+            texts = build_texts(labels, vocab)
+
+            optimizer.zero_grad()
+
+            image_features = clip.model.encode_image(images)
+            image_features = F.normalize(image_features, dim=-1)
+
+            text_tokens = clip.tokenizer(texts).to(device)
+            text_features = clip.model.encode_text(text_tokens)
+            text_features = F.normalize(text_features, dim=-1)
+
+            loss = criterion(image_features, text_features, clip.model.logit_scale)
+            loss.backward()
+            optimizer.step()
+
+            loss_value = loss.item()
+            running_loss += loss_value
+            num_batches += 1
+
+            batch_bar.set_postfix(loss=f"{loss_value:.4f}")
+
+        avg_loss = running_loss / max(1, num_batches)
+        epoch_losses.append(avg_loss)
+        epoch_bar.set_postfix(avg_loss=f"{avg_loss:.4f}")
 
     return epoch_losses
