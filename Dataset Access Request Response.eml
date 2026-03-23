@@ -1,0 +1,758 @@
+Received: from AMBPR09MB8398.eurprd09.prod.outlook.com (::1) by
+ FRWPR09MB8306.eurprd09.prod.outlook.com with HTTPS; Mon, 16 Mar 2026 12:55:19
+ +0000
+Received: from AS9PR06CA0534.eurprd06.prod.outlook.com (2603:10a6:20b:49d::30)
+ by AMBPR09MB8398.eurprd09.prod.outlook.com (2603:10a6:20b:6f0::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.19; Mon, 16 Mar
+ 2026 12:53:58 +0000
+Received: from AMS0EPF0000019D.eurprd05.prod.outlook.com
+ (2603:10a6:20b:49d:cafe::2f) by AS9PR06CA0534.outlook.office365.com
+ (2603:10a6:20b:49d::30) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9700.24 via Frontend Transport; Mon,
+ 16 Mar 2026 12:53:49 +0000
+Authentication-Results: spf=pass (sender IP is 2607:f8b0:4864:20::1145)
+ smtp.mailfrom=gmail.com; dkim=pass (signature was verified)
+ header.d=gmail.com;dmarc=pass action=none header.from=gmail.com;compauth=pass
+ reason=100
+Received-SPF: Pass (protection.outlook.com: domain of gmail.com designates
+ 2607:f8b0:4864:20::1145 as permitted sender) receiver=protection.outlook.com;
+ client-ip=2607:f8b0:4864:20::1145; helo=mail-yw1-x1145.google.com; pr=C
+Received: from mail-yw1-x1145.google.com (2607:f8b0:4864:20::1145) by
+ AMS0EPF0000019D.mail.protection.outlook.com (2603:10a6:20f:fff4:0:15:0:9)
+ with Microsoft SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id
+ 15.20.9700.17 via Frontend Transport; Mon, 16 Mar 2026 12:53:58 +0000
+Received: by mail-yw1-x1145.google.com with SMTP id 00721157ae682-7985edfd371so2274597b3.0
+        for <v.v.jumle@student.tudelft.nl>; Mon, 16 Mar 2026 05:53:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773665637; x=1774270437; darn=student.tudelft.nl;
+        h=to:from:subject:date:message-id:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=v5+iGIdtpMtOLIzYlKf07CxGHmxWxn2sLB5rNo9OR4w=;
+        b=VUV/8dcVAQH5U3X2T4a4hgAUw46cFA49LM5FW3nL0wix0t+t/b0uqi9d0tk0obebIk
+         XinGdEnNmW7ojYdS4OVp0cpiS+n7aLG64cyGGa1jbnCjhD3Oevcoi+nZYRDLlKIPxboJ
+         J55XrnU2zx/O5M1ObLxIkIe1Rn5tcRLkF+4Eqwv4BLGl3YvmT3NOJSEiPVNtRhJ1uu+1
+         29bu4D0OM2TiRAd+wM5ROnJiOOZnGM7QPdvdjvtfDS+aVUnvETcWlDM6B3OywkdsoMnS
+         ZlNkccVPEswVNxVsXkP9osZJKbfnZ0ML7Tz6nVBXSFl57/29BErqEjmDHHlP3E9vxS4b
+         9CAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773665637; x=1774270437;
+        h=to:from:subject:date:message-id:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=v5+iGIdtpMtOLIzYlKf07CxGHmxWxn2sLB5rNo9OR4w=;
+        b=q8CIAWHKoeLxWMKMEui9Cokczamgu7Hg1FvfWc+MUFYcv3ZUGVLwWA7R3Eykxs1s0K
+         86VAFMwnca72qE1D/lmjSi5F4wPvi6D9nQOXGulxAZnPSmBiUePXCpjYhVNH3lShA9gd
+         CFKwEbngJf0plq68IHDWmvEGaAxZEznvCiTxpBffMLuBu+7qkcw5OtkMaNYPUvpeAP5c
+         C7A3YsbfA2ZxvkV1PBG9Gv0ClyoHlW/+48UAZUG4b0Y/AoomYMyaNTWfBLCHLf5n36b/
+         AYat9SU2VxrCi9NFR4cQHGuofjXtGj90HTI8dpiqGuzeJ2dX+o/3xxu9Z0oPMHPMDZXn
+         6Tsg==
+X-Gm-Message-State: AOJu0YxJ+pI/WrN2tfnoc9MjjqIn9UcVu9DmS02BKfBRS8Oe/AYVIlfV
+	J4fzsROhjd/LLcozX24OLxzBtga15nVtJ5hgM8vZAxkuiMbiMY/4TNTcvMxXP7fbNPQdU0HUMFU
+	deMs=
+X-Received: by 2002:a05:690c:3482:b0:794:2fca:81a with SMTP id
+ 00721157ae682-79a1c22574cmr104796277b3.8.1773665637433; Mon, 16 Mar 2026
+ 05:53:57 -0700 (PDT)
+Message-ID: <autogen-java-797c5753-7f31-4a6f-abd1-567a4ed50333@google.com>
+Date: Mon, 16 Mar 2026 12:53:57 +0000
+Subject: Dataset Access Request Response
+From: diyemti@gmail.com
+To: v.v.jumle@student.tudelft.nl
+Content-Type: multipart/alternative; boundary="000000000000450afa064d23b695"
+Return-Path: diyemti@gmail.com
+X-MS-Exchange-Organization-ExpirationStartTime: 16 Mar 2026 12:53:58.9098
+ (UTC)
+X-MS-Exchange-Organization-ExpirationStartTimeReason: OriginalSubmit
+X-MS-Exchange-Organization-ExpirationInterval: 1:00:00:00.0000000
+X-MS-Exchange-Organization-ExpirationIntervalReason: OriginalSubmit
+X-MS-Exchange-Organization-Network-Message-Id: 170f367c-d864-4984-cb0a-08de835b1748
+X-EOPAttributedMessage: 0
+X-EOPTenantAttributedMessage: 096e524d-6929-4030-8cd3-8ab42de0887b:0
+X-MS-Exchange-Organization-MessageDirectionality: Incoming
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AMS0EPF0000019D:EE_|AMBPR09MB8398:EE_|FRWPR09MB8306:EE_
+X-MS-Exchange-Organization-AuthSource: AMS0EPF0000019D.eurprd05.prod.outlook.com
+X-MS-Exchange-Organization-AuthAs: Anonymous
+X-MS-Office365-Filtering-Correlation-Id: 170f367c-d864-4984-cb0a-08de835b1748
+X-MS-Exchange-AtpMessageProperties: SA|SL
+X-MS-Exchange-Organization-SCL: 5
+X-Forefront-Antispam-Report: CIP:2607:f8b0:4864:20::1145;CTRY:;LANG:en;SCL:5;SRV:;IPV:NLI;SFV:SPM;H:mail-yw1-x1145.google.com;PTR:mail-yw1-x1145.google.com;CAT:SPM;SFTY:9.25;SFS:(13230040)(43022699015)(7093399015)(18002099003)(19002099003)(55112099003)(56012099003)(16102099003)(8096899003);DIR:INB;SFTY:9.25;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|43022699015|7093399015|18002099003|19002099003|55112099003|56012099003|16102099003|8096899003;
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2026 12:53:58.8711
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 170f367c-d864-4984-cb0a-08de835b1748
+X-MS-Exchange-CrossTenant-Id: 096e524d-6929-4030-8cd3-8ab42de0887b
+X-MS-Exchange-CrossTenant-AuthSource: AMS0EPF0000019D.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AMBPR09MB8398
+X-MS-Exchange-Transport-EndToEndLatency: 00:01:20.9343553
+X-MS-Exchange-Processed-By-BccFoldering: 15.20.9700.017
+X-Microsoft-Antispam-Mailbox-Delivery:
+	ucf:0;jmr:0;auth:0;dest:J;OFR:SpamFilterAuthJ;ENG:(910005)(944506478)(944626604)(4710137)(4715077)(4999163)(920097)(930201)(3100021)(140003)(1420198);RF:JunkEmail;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3ZlTrwluTF7doGkQ/5Je94OUewWLq9E60ayuyVyhHVXUnKmtwNAmbYYfi5r6?=
+ =?us-ascii?Q?bNaUSWWyGQgfyhHKyZczZCuOluAduFEys1cFTELHcP8LgiSX4vgb3NA+lv6F?=
+ =?us-ascii?Q?Ez8EvPWoU60Nu99cqSbFPE83vjnBM4wDQHiU9KgyNxhq1v17BqOnFc1X+Q6O?=
+ =?us-ascii?Q?p6TBVmpPwE0T9BXrIzEQmPa8mul/E9cvy98ZwlvUYhiA1I/Die8bRe+zoXF2?=
+ =?us-ascii?Q?xK+Q4BYdKct3GsTOSZVj3ZM0mbbutdJQfWzdgBltnqZwcGZ+eVZZDk4VMQVb?=
+ =?us-ascii?Q?1W7IYkHgjD/iNOPPtb2E2eRSyra0jbVXSc7sb2eVCoYo2mYQQyxKBsC4BgSa?=
+ =?us-ascii?Q?6lGa4Cox9WPoVB9U+gJDBCruXTZMFFAISio/YiJLgKPBpnCJO2mscnBE2fU9?=
+ =?us-ascii?Q?W0DtNAxxV00TpTjblFneQq6fIXbrLMCPbv/61erWJn0QERQW/O2Hynn78Xfm?=
+ =?us-ascii?Q?6a0kKZAzv8de2wCr8G8l+Jjzbu6tdf3m3nFe0/RnDeBGVMvBavHQX3f63hjF?=
+ =?us-ascii?Q?rlNh8X79ytwG9aFsjDtoRuzoGZloqHuKfj9uZXiOuiQVkOF6qRmBidfguUTm?=
+ =?us-ascii?Q?NDYa43qwXY9E/t0zqSphRbFxWIwX4+CZ3u18YbVmLTNlNejN71Lr14IXpyJj?=
+ =?us-ascii?Q?kZGFOxWWtPEEbDkm924pLN6YVUZxQKAbydDHQ0Naa8lKNg39XZpWMrzSSMe6?=
+ =?us-ascii?Q?n2l8RDCt9+PmygLMGq324Q40Cd/PvTpFnU9mbkSc/bxuXkskBkIBxKzNl6+Q?=
+ =?us-ascii?Q?W+THjsGUagKx9E+7NW6RmDHWuamiedBOgxUJAPm0e5t8fXkEVpOMFqZ9OvA7?=
+ =?us-ascii?Q?dcvy/sUswYjTB9Lyxi3Q68F0ArCl5F7mAwroHR1z+4eMiwxo1rc5/c+T+0vk?=
+ =?us-ascii?Q?XzU6TxiUL0iU1utv2WofVrxncSps1A7K9g++ytDOmAtApO8aVmnWv6HibBqw?=
+ =?us-ascii?Q?YGksKaFjYUgdNdZwPjXd0SnuBtm5QWgoW1NnwPPqW4Pr0VQ+31ohyUdpxMU/?=
+ =?us-ascii?Q?Q2HRPR9gMSrLIPPeMLXu94W8pUN9FCFvmAksiYBtDSCOcdxNX3o7YTFLc62J?=
+ =?us-ascii?Q?xrXPfxkEvScsH47YWWb/7CncDahriTxSkEtVfnOA0wtJaxd9vXT44vNHGEwT?=
+ =?us-ascii?Q?dtO9eHT+ikE9/CP51qQHSyUxhMRumCH23WrixWYXsHY5l2kCcTlVmrsdV96k?=
+ =?us-ascii?Q?/RC8EDFm4Ot4tiJoW5Z1npJIbXGkOg309RXWxPo4HES3rAT1OYGdwdq/VMc0?=
+ =?us-ascii?Q?pJGe3NSuq4r82gDraXmrS1nlHsmRmW6PEG4oHOupicFnecrbfdqZsNAhuaO6?=
+ =?us-ascii?Q?FzHHMVWsf/gcpo3SbcnAo0qJ/FdjLVZ4UAXJXQawRrrdLmp7JTd0oWV33Ngi?=
+ =?us-ascii?Q?ss2TLO1zitPBb99L94WbuqY1mpUcBf9b3gtwAjVLIw+sojn6tsc+aBQomXEe?=
+ =?us-ascii?Q?ChvWyY3BMoEH7MFmKLmjOfoaVZXI54/ZraJsaF459IKvdHmX84MMHb6f4yUu?=
+ =?us-ascii?Q?iAFPw5Z2zyIkPHVkWI3Ngr2lrg9C57aq45+QGoJWzEVtIcK3HOduOL9OIu5Q?=
+ =?us-ascii?Q?Uw2vJCJ5w8KEhNOnBJxoK1rnVX2qmYr8ntN9OqBjdFAENAWyrR77mZKEOBNh?=
+ =?us-ascii?Q?tc3KnC36EjCWASxUTXcZpv0R74YrO3yT8dX9xrDQIKWH6GFDoKHWU4idspQC?=
+ =?us-ascii?Q?L+zILBK5bHldLnZDOx+4gW50n7ejoQDOX0p12yG/bo12OGU3L02mpu0g2IVZ?=
+ =?us-ascii?Q?wQALuCMOh7JvTImrWeamrxsFWRKjC6s+NvC8vLVxC5QWkMHNIE5w7NT5Z9Nr?=
+ =?us-ascii?Q?OvtbhI6EHxwIZJqatNcmWI46P+/uumhYUt/v6je1Qahku5vAHf+fTIiG5Toz?=
+ =?us-ascii?Q?wjXHNhc7W2STaFvvPXWuHp4dn32DVF6/hARswrfqrqdkJDMgVrv6AdaItdp/?=
+ =?us-ascii?Q?PqEBeVoqapDh/cslEsYIrazHFpHZQgu9bYmYepCCWJUFHyuJUfvmDwLseAo3?=
+ =?us-ascii?Q?OKAxTrxkA1bVOHZh+MDuDASn73PvBx9SehhJ2g2bD/QV65e7UKKx0S8ioozj?=
+ =?us-ascii?Q?5QEVNTSK++dcbJ4jBVZ6Q/4hlHY54yslJTs9kf2e9iLqBPXh4uoBKEHOLnhg?=
+ =?us-ascii?Q?pYxgScxL72OfZ4PZn7s4off67BB8lqO8gRwfKwjVFKokLII7QOtLIfooOuqS?=
+ =?us-ascii?Q?xXZquw/GPX0vTxRMPUuENFoqSgPrhPF0AJSnMVdbp7MhsWj51ki1+mAOdVFM?=
+ =?us-ascii?Q?swcuJw551L4nkAN7CfMmC1OsPDI+jrxteN/jmL7NgcSRrLGYcgFmjW8ypbXy?=
+ =?us-ascii?Q?ioD2PBIEsXa9F/4LnYW2688b42L8a80EHjbHSilwbC/Vb8cBS/duULYIwnEt?=
+ =?us-ascii?Q?FpqzhxBOZmwo6vXc2RT6mXqzWGoy2YQn2Xi24B2N+OhA08PB0JqmZ1eZVCP4?=
+ =?us-ascii?Q?h+lxYHbEA/uBQUoMf+HL00ojT6yYqMVklOZtD8d1X7DPSs5X0lhVipNadbhy?=
+ =?us-ascii?Q?GF9mZQ+SzzhPNJaCSiu+wqhH5SqPMZIV+GrsIvowGaP7WxvHDM0qOpc7MzQH?=
+ =?us-ascii?Q?4JgODbZiqp95OoY414iigLAdgl2tf61hGYo7EhB2xRNINJgvx4FdEWYlLC3a?=
+ =?us-ascii?Q?b2zyhKq+oKetCgRTF/AXZpP1v45CdPkLl8NOG9m2O9Xlc85esGgU5MFPHgSX?=
+ =?us-ascii?Q?bJ41kb8pITUgNSquI0PkUq8DXq8sRqbCebbJrZG97S5RW/k11pNPZmpdpiDz?=
+ =?us-ascii?Q?e2wNAYsrp+z5ilNyWIlPf+lkgvrpQUj5FAeppKoh0/z75PYzfrc9/BQFBj7u?=
+ =?us-ascii?Q?Sk/ptyoM4kmK8PPovIiltanXOHMf4IV5FVrDUCGTxcXLg/CDV8XczyGIhBnz?=
+ =?us-ascii?Q?xe4lpViZIcGXnuV6fMbDmEYRzM4wmNlpLob/VikNU+s7igW+fkzejxArMOEg?=
+ =?us-ascii?Q?NrqDoAUYHjMwsBXc8WLWgUWBG+2by1Jya97Ln6wYm4ej5VdpUliAMiJNDFw6?=
+ =?us-ascii?Q?2c4NJNMZn1BQULD5gqDcT70DaTP7pfi5vKufuwUCJYDby/W/Ltcwi0Y/l3Ar?=
+ =?us-ascii?Q?XeGihzvb7/PNZeNH+hbJ1cOCkGBgR4Fdh3eGQ7SwSKrqVHDr3Adoe+NyxGGT?=
+ =?us-ascii?Q?Fb8AJk0d3u+FVwPYO+ldm0Sic6ZYjdCEX99wWQAk6Q4Gp1AhEpSUzY0hpcj6?=
+ =?us-ascii?Q?ejaRf21Id7i9PCleMuK9chvnhqu3a2bAOaS2R9PRAD+JsbvRbD0gN65aP7Bu?=
+ =?us-ascii?Q?iHCw4frHvVu8jpa5BU9bbGQNU2IlB5/9GS8JZVwSFneJLWd0na7pE2xKQEW8?=
+ =?us-ascii?Q?Hi+X8V2zRzuPqPBWvW3YYBU2Xw9pcBOTI1KQ5p8Awb+hCpdQYqYHWzoP4bOl?=
+ =?us-ascii?Q?OW/yqeg6BEyzkIdSNKuPFmc6FBDogf4nxVpayv24cmPw7qFMHhbvhyIUjUWu?=
+ =?us-ascii?Q?ZfVP3NBQJ8oMcSvSSyHL2i459BTfe2uU7xFSv5+eLO8bDPNkvGR2syWP/1e3?=
+ =?us-ascii?Q?aAEGfsS1F6ZH86Grg+Rom0ibeW3z9f3rLvsQm+dJ9WWsKmI47eu2KW8KxnBb?=
+ =?us-ascii?Q?DVdTfVVyTQbRjNK2qKZTMb1yOUspN5rjeIYpQF45iSLqGk2lHtTS6ZoZEqLy?=
+ =?us-ascii?Q?Jceg3tMm8jjux2iYsP4OGdk6RxIqdOE+mGrJZgywNOjqSfyaF1rudUos6ThY?=
+ =?us-ascii?Q?xcoALjb5x15Ne7edRqKpS9Rh6FHE6QwKVSPDj4TA6uAL2Myh1O6bTFtip1GT?=
+ =?us-ascii?Q?1toM75oq8oOPdjIjFE0YM7CmuqfGYfcKZiWoJuwwtzkemcQ8H6KStHdpqrMU?=
+ =?us-ascii?Q?bprJqcz0fJKEjUAxDkZbChvehsL3YQNXzcB1ZGRHsuIYyB3gGwKOxbcjq2el?=
+ =?us-ascii?Q?p2TB9y8OHRx5Lr4w5kP85JteBF+GynlGpEQvNi6YmOmHVe8lj69IdADVEB45?=
+ =?us-ascii?Q?wuX1ZxzOIu3RxBnZ4JQ2euXjf9wc5iPBc8tIl0xy7KY0DrnWOCxkmkXy3097?=
+ =?us-ascii?Q?sZlt7Cs1J80MTZlCUYEAyk3nyru4X03YZB3fmIDdRsp3Aq4x8xOKgSGVY9FK?=
+ =?us-ascii?Q?BPQ2DxphJ722z2Sm+xvhJN1PWLqotb+gWDYwUqTMbEow17Z9sDGRbeTzxIB6?=
+ =?us-ascii?Q?iPAz62cLuu8qHPQQNvmkUVyU1dpzkop9Zd7pBKJpFx7OUZgmfW6ILa1yUP48?=
+ =?us-ascii?Q?5ib3ss9My2xryttH?=
+MIME-Version: 1.0
+
+--000000000000450afa064d23b695
+Content-Type: text/plain; charset="utf-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: quoted-printable
+
+You don't often get email from diyemti@gmail.com. Learn why this is importa=
+nt<https://aka.ms/LearnAboutSenderIdentification>
+
+Hi,
+
+Many thanks for your interest in our work. Please find below the necessary =
+links to download it with the terms of use.
+
+Downloads:
+
+  *   README<http://wednesday.csail.mit.edu/temporal/release/README.md>
+  *   Layers<http://wednesday.csail.mit.edu/temporal/release/recipe1M_layer=
+s.tar.gz> (381 MiB)
+  *   Ingredient detections<http://wednesday.csail.mit.edu/temporal/release=
+/det_ingrs.json> (102 MiB)
+  *   Recipe1M images:
+     *   training<http://wednesday.csail.mit.edu/temporal/release/recipe1M_=
+images_train.tar> (94 GiB)
+     *   validation<http://wednesday.csail.mit.edu/temporal/release/recipe1=
+M_images_val.tar> (21 GiB)
+     *   test<http://wednesday.csail.mit.edu/temporal/release/recipe1M_imag=
+es_test.tar> (20 GiB)
+  *   Recipe1M+ images:
+     *   0<http://wednesday.csail.mit.edu/temporal/release/recipe1M+_images=
+/recipe1M+_0.tar>, 1<http://wednesday.csail.mit.edu/temporal/release/recipe=
+1M+_images/recipe1M+_1.tar>, 2<http://wednesday.csail.mit.edu/temporal/rele=
+ase/recipe1M+_images/recipe1M+_2.tar>, 3<http://wednesday.csail.mit.edu/tem=
+poral/release/recipe1M+_images/recipe1M+_3.tar>, 4<http://wednesday.csail.m=
+it.edu/temporal/release/recipe1M+_images/recipe1M+_4.tar>, 5<http://wednesd=
+ay.csail.mit.edu/temporal/release/recipe1M+_images/recipe1M+_5.tar>, 6<http=
+://wednesday.csail.mit.edu/temporal/release/recipe1M+_images/recipe1M+_6.ta=
+r>, 7<http://wednesday.csail.mit.edu/temporal/release/recipe1M+_images/reci=
+pe1M+_7.tar>, 8<http://wednesday.csail.mit.edu/temporal/release/recipe1M+_i=
+mages/recipe1M+_8.tar>, 9<http://wednesday.csail.mit.edu/temporal/release/r=
+ecipe1M+_images/recipe1M+_9.tar>, a<http://wednesday.csail.mit.edu/temporal=
+/release/recipe1M+_images/recipe1M+_a.tar>, b<http://wednesday.csail.mit.ed=
+u/temporal/release/recipe1M+_images/recipe1M+_b.tar>, c<http://wednesday.cs=
+ail.mit.edu/temporal/release/recipe1M+_images/recipe1M+_c.tar>, d<http://we=
+dnesday.csail.mit.edu/temporal/release/recipe1M+_images/recipe1M+_d.tar>, e=
+<http://wednesday.csail.mit.edu/temporal/release/recipe1M+_images/recipe1M+=
+_e.tar>, f<http://wednesday.csail.mit.edu/temporal/release/recipe1M+_images=
+/recipe1M+_f.tar> (approx. 210 GiB each tar file)
+  *   Layer2+: layer2+.json<http://wednesday.csail.mit.edu/temporal/release=
+/layer2+.json> (2.5 GiB)
+  *   Model training files:
+     *   data.h5.gz<http://wednesday.csail.mit.edu/temporal/release/recipe1=
+M_pretrained/data.h5.gz> (89 GiB, recipe1M)
+     *   vocab.bin.gz<http://wednesday.csail.mit.edu/temporal/release/recip=
+e1M_pretrained/vocab.bin.gz> (33 MiB)
+     *   classes1M.pkl<http://wednesday.csail.mit.edu/temporal/release/reci=
+pe1M_pretrained/classes1M.pkl> (26 MiB)
+     *   train.tar<http://wednesday.csail.mit.edu/temporal/release/train.ta=
+r> (24 GiB, recipe1M)
+     *   val.tar<http://wednesday.csail.mit.edu/temporal/release/val.tar> (=
+5 GiB, recipe1M)
+     *   test.tar<http://wednesday.csail.mit.edu/temporal/release/test.tar>=
+ (5 GiB, recipe1M)
+     *   encs_train_1024.t7<http://wednesday.csail.mit.edu/temporal/release=
+/instr_embs/encs_train_1024.t7> (29 GiB)
+     *   encs_val_1024.t7<http://wednesday.csail.mit.edu/temporal/release/i=
+nstr_embs/encs_val_1024.t7> (6 GiB)
+     *   encs_test_1024.t7<http://wednesday.csail.mit.edu/temporal/release/=
+instr_embs/encs_test_1024.t7> (6 GiB)
+     *   remove1M.txt<http://wednesday.csail.mit.edu/temporal/release/remov=
+e1M.txt> (133 KiB)
+  *   Recipes with nutritional information<http://wednesday.csail.mit.edu/t=
+emporal/release/recipes_with_nutritional_info.json> (213 MiB)
+
+Terms of Use:
+
+By downloading the data from the above URLs, you agree to the following ter=
+ms:
+
+  *   You acknowledge that MIT CSAIL does not own the copyright to the reci=
+pes or images.
+  *   You will use the data only for non-commercial research and educationa=
+l purposes.
+  *   You will NOT distribute the above URLs.
+  *   MIT CSAIL makes no representations or warranties regarding the data, =
+including but not limited to warranties of non-infringement or fitness for =
+a particular purpose.
+  *   You accept full responsibility for your use of the data and shall def=
+end and indemnify MIT CSAIL, including its employees, officers, and agents,=
+ against any and all claims arising from your use of the data.
+
+--000000000000450afa064d23b695
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<html><head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dutf-8"></=
+head>
+<body>
+<table border=3D"0" cellspacing=3D"0" cellpadding=3D"0" width=3D"100%" styl=
+e=3D" aspect-ratio: revert !important; background: revert !important; block=
+-size: revert !important; border: revert !important; bottom: revert !import=
+ant; color: revert !important; color-scheme: revert !important; content-vis=
+ibility: revert !important; cursor: revert !important; direction: revert !i=
+mportant; display: revert !important; font-size: revert !important; height:=
+ revert !important; hyphens: revert !important; letter-spacing: revert !imp=
+ortant; line-height: revert !important; margin: revert !important; opacity:=
+ revert !important; order: revert !important; outline: revert !important; o=
+verflow: revert !important; padding: revert !important; position: revert !i=
+mportant; resize: revert !important; rotate: revert !important; scale: reve=
+rt !important; tab-size: revert !important; table-layout: revert !important=
+; text-align: revert !important; text-indent: revert !important; text-orien=
+tation: revert !important; text-overflow: revert !important; text-shadow: r=
+evert !important; text-transform: revert !important; text-wrap: revert !imp=
+ortant; top: revert !important; transition: revert !important; user-select:=
+ revert !important; vertical-align: revert !important; visibility: revert !=
+important; white-space: revert !important; width: revert !important; word-b=
+reak: revert !important; word-spacing: revert !important; writing-mode: rev=
+ert !important; zoom: revert !important; cellpadding: 0 !important; border:=
+ 0 !important; cellspacing: 0 !important; display: table !important; width:=
+ 100% !important; table-layout: fixed !important; border-collapse: seperate=
+ !important; float: none !important; border-spacing: 0px 0px !important; " =
+align=3D"left">
+<tbody style=3D" aspect-ratio: revert !important; background: revert !impor=
+tant; block-size: revert !important; border: revert !important; bottom: rev=
+ert !important; color: revert !important; color-scheme: revert !important; =
+content-visibility: revert !important; cursor: revert !important; direction=
+: revert !important; display: revert !important; font-size: revert !importa=
+nt; height: revert !important; hyphens: revert !important; letter-spacing: =
+revert !important; line-height: revert !important; margin: revert !importan=
+t; opacity: revert !important; order: revert !important; outline: revert !i=
+mportant; overflow: revert !important; padding: revert !important; position=
+: revert !important; resize: revert !important; rotate: revert !important; =
+scale: revert !important; tab-size: revert !important; table-layout: revert=
+ !important; text-align: revert !important; text-indent: revert !important;=
+ text-orientation: revert !important; text-overflow: revert !important; tex=
+t-shadow: revert !important; text-transform: revert !important; text-wrap: =
+revert !important; top: revert !important; transition: revert !important; u=
+ser-select: revert !important; vertical-align: revert !important; visibilit=
+y: revert !important; white-space: revert !important; width: revert !import=
+ant; word-break: revert !important; word-spacing: revert !important; writin=
+g-mode: revert !important; zoom: revert !important; display: block !importa=
+nt; ">
+<tr style=3D" aspect-ratio: revert !important; background: revert !importan=
+t; block-size: revert !important; border: revert !important; bottom: revert=
+ !important; color: revert !important; color-scheme: revert !important; con=
+tent-visibility: revert !important; cursor: revert !important; direction: r=
+evert !important; display: revert !important; font-size: revert !important;=
+ height: revert !important; hyphens: revert !important; letter-spacing: rev=
+ert !important; line-height: revert !important; margin: revert !important; =
+opacity: revert !important; order: revert !important; outline: revert !impo=
+rtant; overflow: revert !important; padding: revert !important; position: r=
+evert !important; resize: revert !important; rotate: revert !important; sca=
+le: revert !important; tab-size: revert !important; table-layout: revert !i=
+mportant; text-align: revert !important; text-indent: revert !important; te=
+xt-orientation: revert !important; text-overflow: revert !important; text-s=
+hadow: revert !important; text-transform: revert !important; text-wrap: rev=
+ert !important; top: revert !important; transition: revert !important; user=
+-select: revert !important; vertical-align: revert !important; visibility: =
+revert !important; white-space: revert !important; width: revert !important=
+; word-break: revert !important; word-spacing: revert !important; writing-m=
+ode: revert !important; zoom: revert !important; ">
+<td valign=3D"middle" width=3D"1px" bgcolor=3D"#A6A6A6" cellpadding=3D"7px =
+2px 7px 2px" style=3D" aspect-ratio: revert !important; background: revert =
+!important; block-size: revert !important; border: revert !important; botto=
+m: revert !important; color: revert !important; color-scheme: revert !impor=
+tant; content-visibility: revert !important; cursor: revert !important; dir=
+ection: revert !important; display: revert !important; font-size: revert !i=
+mportant; height: revert !important; hyphens: revert !important; letter-spa=
+cing: revert !important; line-height: revert !important; margin: revert !im=
+portant; opacity: revert !important; order: revert !important; outline: rev=
+ert !important; overflow: revert !important; padding: revert !important; po=
+sition: revert !important; resize: revert !important; rotate: revert !impor=
+tant; scale: revert !important; tab-size: revert !important; table-layout: =
+revert !important; text-align: revert !important; text-indent: revert !impo=
+rtant; text-orientation: revert !important; text-overflow: revert !importan=
+t; text-shadow: revert !important; text-transform: revert !important; text-=
+wrap: revert !important; top: revert !important; transition: revert !import=
+ant; user-select: revert !important; vertical-align: revert !important; vis=
+ibility: revert !important; white-space: revert !important; width: revert !=
+important; word-break: revert !important; word-spacing: revert !important; =
+writing-mode: revert !important; zoom: revert !important; padding: 7px 2px =
+7px 2px !important; background-color: #A6A6A6 !important; valign: middle !i=
+mportant; width: 0px !important; ">
+</td>
+<td valign=3D"middle" width=3D"100%" bgcolor=3D"#EAEAEA" cellpadding=3D"7px=
+ 5px 7px 15px" color=3D"#212121" style=3D" aspect-ratio: revert !important;=
+ background: revert !important; block-size: revert !important; border: reve=
+rt !important; bottom: revert !important; color: revert !important; color-s=
+cheme: revert !important; content-visibility: revert !important; cursor: re=
+vert !important; direction: revert !important; display: revert !important; =
+font-size: revert !important; height: revert !important; hyphens: revert !i=
+mportant; letter-spacing: revert !important; line-height: revert !important=
+; margin: revert !important; opacity: revert !important; order: revert !imp=
+ortant; outline: revert !important; overflow: revert !important; padding: r=
+evert !important; position: revert !important; resize: revert !important; r=
+otate: revert !important; scale: revert !important; tab-size: revert !impor=
+tant; table-layout: revert !important; text-align: revert !important; text-=
+indent: revert !important; text-orientation: revert !important; text-overfl=
+ow: revert !important; text-shadow: revert !important; text-transform: reve=
+rt !important; text-wrap: revert !important; top: revert !important; transi=
+tion: revert !important; user-select: revert !important; vertical-align: re=
+vert !important; visibility: revert !important; white-space: revert !import=
+ant; width: revert !important; word-break: revert !important; word-spacing:=
+ revert !important; writing-mode: revert !important; zoom: revert !importan=
+t; width: 100% !important; background-color: #EAEAEA !important; padding: 7=
+px 5px 7px 15px !important; font-family: wf_segoe-ui_normal, Segoe UI, Sego=
+e WP, Tahoma, Arial, sans-serif !important; font-size: 12px !important; fon=
+t-weight: normal !important; color: #212121 !important; text-align: left !i=
+mportant; word-wrap: break-word !important; ">
+<div style=3D" aspect-ratio: revert !important; background: revert !importa=
+nt; block-size: revert !important; border: revert !important; bottom: rever=
+t !important; color: revert !important; color-scheme: revert !important; co=
+ntent-visibility: revert !important; cursor: revert !important; direction: =
+revert !important; display: revert !important; font-size: revert !important=
+; height: revert !important; hyphens: revert !important; letter-spacing: re=
+vert !important; line-height: revert !important; margin: revert !important;=
+ opacity: revert !important; order: revert !important; outline: revert !imp=
+ortant; overflow: revert !important; padding: revert !important; position: =
+revert !important; resize: revert !important; rotate: revert !important; sc=
+ale: revert !important; tab-size: revert !important; table-layout: revert !=
+important; text-align: revert !important; text-indent: revert !important; t=
+ext-orientation: revert !important; text-overflow: revert !important; text-=
+shadow: revert !important; text-transform: revert !important; text-wrap: re=
+vert !important; top: revert !important; transition: revert !important; use=
+r-select: revert !important; vertical-align: revert !important; visibility:=
+ revert !important; white-space: revert !important; width: revert !importan=
+t; word-break: revert !important; word-spacing: revert !important; writing-=
+mode: revert !important; zoom: revert !important; ">
+You don't often get email from diyemti@gmail.com. <a href=3D"https://aka.ms=
+/LearnAboutSenderIdentification" style=3D"background: revert !important;col=
+or: revert !important;content-visibility: revert !important;direction: reve=
+rt !important;display: revert !important;font-size: revert !important;opaci=
+ty: revert !important;rotate: revert !important;scale: revert !important;vi=
+sibility: revert !important;">
+Learn why this is important</a> </div>
+</td>
+<td valign=3D"middle" align=3D"left" width=3D"75px" bgcolor=3D"#EAEAEA" cel=
+lpadding=3D"7px 5px 7px 5px" color=3D"#212121" style=3D" aspect-ratio: reve=
+rt !important; background: revert !important; block-size: revert !important=
+; border: revert !important; bottom: revert !important; color: revert !impo=
+rtant; color-scheme: revert !important; content-visibility: revert !importa=
+nt; cursor: revert !important; direction: revert !important; display: rever=
+t !important; font-size: revert !important; height: revert !important; hyph=
+ens: revert !important; letter-spacing: revert !important; line-height: rev=
+ert !important; margin: revert !important; opacity: revert !important; orde=
+r: revert !important; outline: revert !important; overflow: revert !importa=
+nt; padding: revert !important; position: revert !important; resize: revert=
+ !important; rotate: revert !important; scale: revert !important; tab-size:=
+ revert !important; table-layout: revert !important; text-align: revert !im=
+portant; text-indent: revert !important; text-orientation: revert !importan=
+t; text-overflow: revert !important; text-shadow: revert !important; text-t=
+ransform: revert !important; text-wrap: revert !important; top: revert !imp=
+ortant; transition: revert !important; user-select: revert !important; vert=
+ical-align: revert !important; visibility: revert !important; white-space: =
+revert !important; width: revert !important; word-break: revert !important;=
+ word-spacing: revert !important; writing-mode: revert !important; zoom: re=
+vert !important; width: 75px !important; background-color: #EAEAEA !importa=
+nt; padding: 7px 5px 7px 5px !important; font-family: wf_segoe-ui_normal, S=
+egoe UI, Segoe WP, Tahoma, Arial, sans-serif !important; font-size: 12px !i=
+mportant; font-weight: normal !important; color: #212121 !important; text-a=
+lign: left !important; word-wrap: break-word !important; align: left !impor=
+tant; ">
+</td>
+</tr>
+</tbody>
+</table>
+<div>
+<p>Hi,</p>
+<p>Many thanks for your interest in our work. Please find below the necessa=
+ry links to download it with the terms of use.</p>
+<p><strong>Downloads:</strong></p>
+<ul>
+<li><a href=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhttp%3=
+A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2FREADME.md&amp;data=3D=
+05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C170f367cd8644984cb0a08de835b1748=
+%7C096e524d692940308cd38ab42de0887b%7C0%7C0%7C639092625200335907%7CUnknown%=
+7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsI=
+kFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%7C%7C&amp;sdata=3DmfHeadfm9lC1Wu=
+Ds3NdMGAhHMpAMkgpj9wC89vGswwQ%3D&amp;reserved=3D0" originalsrc=3D"http://we=
+dnesday.csail.mit.edu/temporal/release/README.md">README</a></li><li><a hre=
+f=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fwed=
+nesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipe1M_layers.tar.gz&amp;data=
+=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C170f367cd8644984cb0a08de835b1=
+748%7C096e524d692940308cd38ab42de0887b%7C0%7C0%7C639092625200360312%7CUnkno=
+wn%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMi=
+IsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%7C%7C&amp;sdata=3DrgPjIhUTqJM=
+GESVqCNOJwo4DXQ9rLFRb0gdy%2FLo33Dk%3D&amp;reserved=3D0" originalsrc=3D"http=
+://wednesday.csail.mit.edu/temporal/release/recipe1M_layers.tar.gz">Layers<=
+/a> (381 MiB)</li><li><a href=3D"https://eur03.safelinks.protection.outlook=
+.com/?url=3Dhttp%3A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Fdet=
+_ingrs.json&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C170f367cd=
+8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0%7C639092=
+625200373394%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMD=
+AwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%7C%7C&amp=
+;sdata=3D0RjVvukZGYM3EvlLwD1ZQTv4Ltl0sTwaC0dVTTPR2xc%3D&amp;reserved=3D0" o=
+riginalsrc=3D"http://wednesday.csail.mit.edu/temporal/release/det_ingrs.jso=
+n">Ingredient detections</a> (102 MiB)</li><li>Recipe1M images:
+<ul>
+<li><a href=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhttp%3=
+A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipe1M_images_train=
+.tar&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C170f367cd8644984=
+cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0%7C6390926252003=
+88137%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsI=
+lAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%7C%7C&amp;sdata=
+=3Dk5NUMjM2lfZAWKMrvPDCR%2FtfQKexOeKKp89B%2FWb5smE%3D&amp;reserved=3D0" ori=
+ginalsrc=3D"http://wednesday.csail.mit.edu/temporal/release/recipe1M_images=
+_train.tar">training</a> (94 GiB)</li><li><a href=3D"https://eur03.safelink=
+s.protection.outlook.com/?url=3Dhttp%3A%2F%2Fwednesday.csail.mit.edu%2Ftemp=
+oral%2Frelease%2Frecipe1M_images_val.tar&amp;data=3D05%7C02%7Cv.v.jumle%40s=
+tudent.tudelft.nl%7C170f367cd8644984cb0a08de835b1748%7C096e524d692940308cd3=
+8ab42de0887b%7C0%7C0%7C639092625200402866%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0e=
+U1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoy=
+fQ%3D%3D%7C40000%7C%7C%7C&amp;sdata=3DRLS6htcRQIxUJzTcwUqgQLvVnOaZenYc%2BHJ=
+lZFveAz4%3D&amp;reserved=3D0" originalsrc=3D"http://wednesday.csail.mit.edu=
+/temporal/release/recipe1M_images_val.tar">validation</a> (21 GiB)</li><li>=
+<a href=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F=
+%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipe1M_images_test.tar&=
+amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C170f367cd8644984cb0a0=
+8de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0%7C639092625200417016=
+%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOi=
+JXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%7C%7C&amp;sdata=3DZ0D=
+AVhB6%2BGB8uPlYyWr4lJhIES5pOlNR3QlekVnqyQc%3D&amp;reserved=3D0" originalsrc=
+=3D"http://wednesday.csail.mit.edu/temporal/release/recipe1M_images_test.ta=
+r">test</a> (20 GiB)</li></ul>
+</li><li>Recipe1M+ images:
+<ul>
+<li><a href=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhttp%3=
+A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipe1M%2B_images%2F=
+recipe1M%2B_0.tar&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C170=
+f367cd8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0%7C=
+639092625200430208%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIw=
+LjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%7C%=
+7C&amp;sdata=3D%2F%2BSgA%2F5Vv2Jn9YmlfhQOuvBKY5uDf7pvTPWDnoVrtXU%3D&amp;res=
+erved=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/temporal/release/r=
+ecipe1M+_images/recipe1M+_0.tar">0</a>,
+<a href=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F=
+%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipe1M%2B_images%2Freci=
+pe1M%2B_1.tar&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C170f367=
+cd8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0%7C6390=
+92625200444944%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAu=
+MDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%7C%7C&a=
+mp;sdata=3D8WtgMLIHtPp4RZ7Ue5LM1tnL8VAm0%2BcmSb%2Fdfg4oItQ%3D&amp;reserved=
+=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/temporal/release/recipe=
+1M+_images/recipe1M+_1.tar">
+1</a>, <a href=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhtt=
+p%3A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipe1M%2B_images=
+%2Frecipe1M%2B_2.tar&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C=
+170f367cd8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0=
+%7C639092625200459548%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiO=
+iIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%=
+7C%7C&amp;sdata=3DRdQTk4Ftgu00PCxR2klq00N5dvQaKsZLCh1JKsTOsIQ%3D&amp;reserv=
+ed=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/temporal/release/reci=
+pe1M+_images/recipe1M+_2.tar">
+2</a>, <a href=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhtt=
+p%3A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipe1M%2B_images=
+%2Frecipe1M%2B_3.tar&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C=
+170f367cd8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0=
+%7C639092625200474508%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiO=
+iIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%=
+7C%7C&amp;sdata=3DNaUfpXKlR4R2c%2FHZ%2Fl4kkRApTlWRpvz1YLfv%2BhnPE44%3D&amp;=
+reserved=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/temporal/releas=
+e/recipe1M+_images/recipe1M+_3.tar">
+3</a>, <a href=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhtt=
+p%3A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipe1M%2B_images=
+%2Frecipe1M%2B_4.tar&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C=
+170f367cd8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0=
+%7C639092625200488559%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiO=
+iIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%=
+7C%7C&amp;sdata=3DwCMA0aWCX4KdJXobDbfhPZ%2BlRKZN6uB9TSgPdgzfvhU%3D&amp;rese=
+rved=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/temporal/release/re=
+cipe1M+_images/recipe1M+_4.tar">
+4</a>, <a href=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhtt=
+p%3A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipe1M%2B_images=
+%2Frecipe1M%2B_5.tar&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C=
+170f367cd8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0=
+%7C639092625200502508%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiO=
+iIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%=
+7C%7C&amp;sdata=3DnpaOEPRWGb2zXJ0%2BuuyEsyCVR5YwSNtvRJkUxss0Sfk%3D&amp;rese=
+rved=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/temporal/release/re=
+cipe1M+_images/recipe1M+_5.tar">
+5</a>, <a href=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhtt=
+p%3A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipe1M%2B_images=
+%2Frecipe1M%2B_6.tar&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C=
+170f367cd8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0=
+%7C639092625200515990%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiO=
+iIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%=
+7C%7C&amp;sdata=3DfHTLAewcBf%2FcbDn1vKNWehwC0BntOGhWJVS8Yv52B08%3D&amp;rese=
+rved=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/temporal/release/re=
+cipe1M+_images/recipe1M+_6.tar">
+6</a>, <a href=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhtt=
+p%3A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipe1M%2B_images=
+%2Frecipe1M%2B_7.tar&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C=
+170f367cd8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0=
+%7C639092625200527081%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiO=
+iIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%=
+7C%7C&amp;sdata=3DjpyXuLdCELZyukpX3OLWxdhkUPXLh6oRCqp%2FdTjWN0k%3D&amp;rese=
+rved=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/temporal/release/re=
+cipe1M+_images/recipe1M+_7.tar">
+7</a>, <a href=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhtt=
+p%3A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipe1M%2B_images=
+%2Frecipe1M%2B_8.tar&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C=
+170f367cd8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0=
+%7C639092625200541650%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiO=
+iIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%=
+7C%7C&amp;sdata=3DJf6%2Fj1OMatpJXJdyWZ3PC2Jn%2B9XgQ%2F%2Bj4iRP4sPfq9I%3D&am=
+p;reserved=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/temporal/rele=
+ase/recipe1M+_images/recipe1M+_8.tar">
+8</a>, <a href=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhtt=
+p%3A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipe1M%2B_images=
+%2Frecipe1M%2B_9.tar&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C=
+170f367cd8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0=
+%7C639092625200555854%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiO=
+iIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%=
+7C%7C&amp;sdata=3Dt43m2gMMjyF3LKE0U0TCPItz1OzX5tvsALr8gV9l8Qs%3D&amp;reserv=
+ed=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/temporal/release/reci=
+pe1M+_images/recipe1M+_9.tar">
+9</a>, <a href=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhtt=
+p%3A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipe1M%2B_images=
+%2Frecipe1M%2B_a.tar&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C=
+170f367cd8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0=
+%7C639092625200569225%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiO=
+iIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%=
+7C%7C&amp;sdata=3DK79USpQ2y%2BdMuRWTLsBB5A8WskBpCkLmaDCLT7%2BqALI%3D&amp;re=
+served=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/temporal/release/=
+recipe1M+_images/recipe1M+_a.tar">
+a</a>, <a href=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhtt=
+p%3A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipe1M%2B_images=
+%2Frecipe1M%2B_b.tar&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C=
+170f367cd8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0=
+%7C639092625200583464%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiO=
+iIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%=
+7C%7C&amp;sdata=3DQgDyGQkm6L8cgOYzTUMX9Pf0h2z73zVPnfNaZcIOmRw%3D&amp;reserv=
+ed=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/temporal/release/reci=
+pe1M+_images/recipe1M+_b.tar">
+b</a>, <a href=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhtt=
+p%3A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipe1M%2B_images=
+%2Frecipe1M%2B_c.tar&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C=
+170f367cd8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0=
+%7C639092625200597092%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiO=
+iIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%=
+7C%7C&amp;sdata=3DvCgXVz1y6BVjFIlamcChHSv2B8bhtY3CB87m%2B6oCoa4%3D&amp;rese=
+rved=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/temporal/release/re=
+cipe1M+_images/recipe1M+_c.tar">
+c</a>, <a href=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhtt=
+p%3A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipe1M%2B_images=
+%2Frecipe1M%2B_d.tar&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C=
+170f367cd8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0=
+%7C639092625200610222%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiO=
+iIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%=
+7C%7C&amp;sdata=3DtkOuVMCi6XIctYWTJe8PFzMnaxA1uT7t85ZHsCdOhvM%3D&amp;reserv=
+ed=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/temporal/release/reci=
+pe1M+_images/recipe1M+_d.tar">
+d</a>, <a href=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhtt=
+p%3A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipe1M%2B_images=
+%2Frecipe1M%2B_e.tar&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C=
+170f367cd8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0=
+%7C639092625200638365%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiO=
+iIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%=
+7C%7C&amp;sdata=3DFrNJEeiuTIYcpwF5DbwqysRKzhLGehC8AlF6vaF9tbA%3D&amp;reserv=
+ed=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/temporal/release/reci=
+pe1M+_images/recipe1M+_e.tar">
+e</a>, <a href=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhtt=
+p%3A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipe1M%2B_images=
+%2Frecipe1M%2B_f.tar&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C=
+170f367cd8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0=
+%7C639092625200654456%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiO=
+iIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%=
+7C%7C&amp;sdata=3D4tqcnDrTtAe%2BRmA5K4qJdd6yyzqfe40OWSBz%2BDHFBtY%3D&amp;re=
+served=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/temporal/release/=
+recipe1M+_images/recipe1M+_f.tar">
+f</a> (approx. 210 GiB each tar file) </li></ul>
+</li><li>Layer2+: <a href=3D"https://eur03.safelinks.protection.outlook.com=
+/?url=3Dhttp%3A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Flayer2%=
+2B.json&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C170f367cd8644=
+984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0%7C6390926252=
+00668813%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMC=
+IsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%7C%7C&amp;sda=
+ta=3DN1u8NWb%2BS9twYvqjKrj0HeDuu3MNL%2BPo%2BlbiidPRXIY%3D&amp;reserved=3D0"=
+ originalsrc=3D"http://wednesday.csail.mit.edu/temporal/release/layer2+.jso=
+n">
+layer2+.json</a> (2.5 GiB)</li><li>Model training files:
+<ul>
+<li><a href=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhttp%3=
+A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipe1M_pretrained%2=
+Fdata.h5.gz&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C170f367cd=
+8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0%7C639092=
+625200682317%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMD=
+AwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%7C%7C&amp=
+;sdata=3DzOO%2BrxLTHbSE%2BuQopj%2BLHkh5PvJuIQyJok%2FW45WBJRA%3D&amp;reserve=
+d=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/temporal/release/recip=
+e1M_pretrained/data.h5.gz">data.h5.gz</a> (89 GiB, recipe1M)</li><li><a hre=
+f=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fwed=
+nesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipe1M_pretrained%2Fvocab.bin=
+.gz&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C170f367cd8644984c=
+b0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0%7C63909262520069=
+7384%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIl=
+AiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%7C%7C&amp;sdata=
+=3DxvrTl4nfHJTYH3d7%2FneJomje95HDp0m4diEUMHmeWkQ%3D&amp;reserved=3D0" origi=
+nalsrc=3D"http://wednesday.csail.mit.edu/temporal/release/recipe1M_pretrain=
+ed/vocab.bin.gz">vocab.bin.gz</a> (33 MiB)</li><li><a href=3D"https://eur03=
+.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fwednesday.csail.mit.e=
+du%2Ftemporal%2Frelease%2Frecipe1M_pretrained%2Fclasses1M.pkl&amp;data=3D05=
+%7C02%7Cv.v.jumle%40student.tudelft.nl%7C170f367cd8644984cb0a08de835b1748%7=
+C096e524d692940308cd38ab42de0887b%7C0%7C0%7C639092625200712410%7CUnknown%7C=
+TWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkF=
+OIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%7C%7C&amp;sdata=3DMI88WQSi0czngEZh=
+R1GO8lcYxt82YaK6DBeAld%2Fx5Dc%3D&amp;reserved=3D0" originalsrc=3D"http://we=
+dnesday.csail.mit.edu/temporal/release/recipe1M_pretrained/classes1M.pkl">c=
+lasses1M.pkl</a> (26 MiB)</li><li><a href=3D"https://eur03.safelinks.protec=
+tion.outlook.com/?url=3Dhttp%3A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Fr=
+elease%2Ftrain.tar&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C17=
+0f367cd8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0%7=
+C639092625200727251%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiI=
+wLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%7C=
+%7C&amp;sdata=3Dz45dN1vh6oWw0SE58g0oGeYrxYZ87BlAAvpwVNZ0yAY%3D&amp;reserved=
+=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/temporal/release/train.=
+tar">train.tar</a> (24 GiB, recipe1M)</li><li><a href=3D"https://eur03.safe=
+links.protection.outlook.com/?url=3Dhttp%3A%2F%2Fwednesday.csail.mit.edu%2F=
+temporal%2Frelease%2Fval.tar&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudel=
+ft.nl%7C170f367cd8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b=
+%7C0%7C0%7C639092625200752661%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRyd=
+WUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C4=
+0000%7C%7C%7C&amp;sdata=3DFj9lMRgHYkJpnqsy5KRZoJtDYO2PgFgZ3l%2Fzs3kzwlQ%3D&=
+amp;reserved=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/temporal/re=
+lease/val.tar">val.tar</a> (5 GiB, recipe1M)</li><li><a href=3D"https://eur=
+03.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fwednesday.csail.mit=
+.edu%2Ftemporal%2Frelease%2Ftest.tar&amp;data=3D05%7C02%7Cv.v.jumle%40stude=
+nt.tudelft.nl%7C170f367cd8644984cb0a08de835b1748%7C096e524d692940308cd38ab4=
+2de0887b%7C0%7C0%7C639092625200768615%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hc=
+GkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3=
+D%3D%7C40000%7C%7C%7C&amp;sdata=3DFEtmfecGztLu1gZncV0rJ91c6R%2FSgNbZ%2BNiH0=
+yKdQtY%3D&amp;reserved=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/t=
+emporal/release/test.tar">test.tar</a> (5 GiB, recipe1M)</li><li><a href=3D=
+"https://eur03.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fwednesd=
+ay.csail.mit.edu%2Ftemporal%2Frelease%2Finstr_embs%2Fencs_train_1024.t7&amp=
+;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C170f367cd8644984cb0a08de=
+835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0%7C639092625200782612%7C=
+Unknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXa=
+W4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%7C%7C&amp;sdata=3Dy9HlBA=
+FUS2GLsvQAG1PpUolOZqMbObmbe3H0i6Wb5Ps%3D&amp;reserved=3D0" originalsrc=3D"h=
+ttp://wednesday.csail.mit.edu/temporal/release/instr_embs/encs_train_1024.t=
+7">encs_train_1024.t7</a> (29 GiB)</li><li><a href=3D"https://eur03.safelin=
+ks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fwednesday.csail.mit.edu%2Ftem=
+poral%2Frelease%2Finstr_embs%2Fencs_val_1024.t7&amp;data=3D05%7C02%7Cv.v.ju=
+mle%40student.tudelft.nl%7C170f367cd8644984cb0a08de835b1748%7C096e524d69294=
+0308cd38ab42de0887b%7C0%7C0%7C639092625200796080%7CUnknown%7CTWFpbGZsb3d8ey=
+JFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsI=
+ldUIjoyfQ%3D%3D%7C40000%7C%7C%7C&amp;sdata=3DB1c0FCejNwFKP6Nz8ZMLuGB9cM%2B1=
+HxslanVe0ivVsbU%3D&amp;reserved=3D0" originalsrc=3D"http://wednesday.csail.=
+mit.edu/temporal/release/instr_embs/encs_val_1024.t7">encs_val_1024.t7</a> =
+(6 GiB)</li><li><a href=3D"https://eur03.safelinks.protection.outlook.com/?=
+url=3Dhttp%3A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Finstr_emb=
+s%2Fencs_test_1024.t7&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7=
+C170f367cd8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C=
+0%7C639092625200810911%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYi=
+OiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C=
+%7C%7C&amp;sdata=3DHpkkYQlh81wmkKcSaHQpxQ8%2FnK1zh6%2BrUifsSEpAx7g%3D&amp;r=
+eserved=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/temporal/release=
+/instr_embs/encs_test_1024.t7">encs_test_1024.t7</a> (6 GiB)</li><li><a hre=
+f=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fwed=
+nesday.csail.mit.edu%2Ftemporal%2Frelease%2Fremove1M.txt&amp;data=3D05%7C02=
+%7Cv.v.jumle%40student.tudelft.nl%7C170f367cd8644984cb0a08de835b1748%7C096e=
+524d692940308cd38ab42de0887b%7C0%7C0%7C639092625200825629%7CUnknown%7CTWFpb=
+GZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoi=
+TWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%7C%7C&amp;sdata=3DuNb9ag49f6ffQG%2BsFVl=
+gfsuIbmpr4KZvw9iDTqkRvaA%3D&amp;reserved=3D0" originalsrc=3D"http://wednesd=
+ay.csail.mit.edu/temporal/release/remove1M.txt">remove1M.txt</a> (133 KiB)<=
+/li></ul>
+</li><li><a href=3D"https://eur03.safelinks.protection.outlook.com/?url=3Dh=
+ttp%3A%2F%2Fwednesday.csail.mit.edu%2Ftemporal%2Frelease%2Frecipes_with_nut=
+ritional_info.json&amp;data=3D05%7C02%7Cv.v.jumle%40student.tudelft.nl%7C17=
+0f367cd8644984cb0a08de835b1748%7C096e524d692940308cd38ab42de0887b%7C0%7C0%7=
+C639092625200840242%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiI=
+wLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C40000%7C%7C=
+%7C&amp;sdata=3Dm6vDDe3sdRtk9ADrG0xWSwNjZpkD90En7U60OMSOmjY%3D&amp;reserved=
+=3D0" originalsrc=3D"http://wednesday.csail.mit.edu/temporal/release/recipe=
+s_with_nutritional_info.json">Recipes with nutritional information</a> (213=
+ MiB)</li></ul>
+<p><strong>Terms of Use:</strong></p>
+<p>By downloading the data from the above URLs, you agree to the following =
+terms:</p>
+<ul>
+<li>You acknowledge that MIT CSAIL does not own the copyright to the recipe=
+s or images.</li><li>You will use the data only for non-commercial research=
+ and educational purposes.</li><li>You will NOT distribute the above URLs.<=
+/li><li>MIT CSAIL makes no representations or warranties regarding the data=
+, including but not limited to warranties of non-infringement or fitness fo=
+r a particular purpose.</li><li>You accept full responsibility for your use=
+ of the data and shall defend and indemnify MIT CSAIL, including its employ=
+ees, officers, and agents, against any and all claims arising from your use=
+ of the data.</li></ul>
+</div>
+</body>
+</html>
+
+--000000000000450afa064d23b695--

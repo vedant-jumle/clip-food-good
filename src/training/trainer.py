@@ -8,8 +8,25 @@ from torch.optim import AdamW
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 
+from open_clip.loss import ClipLoss
+
 from src.models.clip_wrapper import CLIPWrapper
 from src.models.ingredient_head import IngredientHead
+from src.models.lora import apply_lora_to_clip, get_lora_parameters
+
+
+##### Helper functions #####
+
+def build_texts(labels: torch.Tensor, vocab: list[str]) -> list[str]:
+    texts: list[str] = []
+    for row in labels:
+        indices = row.nonzero(as_tuple=True)[0].tolist()
+        ingredients = [vocab[i] for i in indices]
+        texts.append("ingredients: " + ", ".join(ingredients) if ingredients else "food")
+    return texts
+
+
+##### Main functions #####
 
 def train(
     clip: CLIPWrapper,
