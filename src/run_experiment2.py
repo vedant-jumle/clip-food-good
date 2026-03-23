@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+import os
 import sys
 from pathlib import Path
 
@@ -154,15 +156,34 @@ def main() -> None:
     tqdm.write(f"{'-'*26}-|-------|-------|------")
 
     n_evaluated = None
+    prompt_results = []
     for prompt_type in tqdm(PROMPT_TYPES, desc="Prompt types"):
         precision, recall, f1, n = evaluate_prompt_type(loader, clip, vocab, prompt_type)
         if n_evaluated is None:
             n_evaluated = n
         label = PROMPT_LABELS.get(prompt_type, prompt_type)
         tqdm.write(f"{label:<26} | {precision:.2f}  | {recall:.2f}  | {f1:.2f}")
+        prompt_results.append({
+            "prompt": prompt_type,
+            "label": label,
+            "P@5": round(precision, 4),
+            "R@5": round(recall, 4),
+            "F1@5": round(f1, 4),
+        })
 
     tqdm.write("")
     tqdm.write(f"Recipes evaluated: {n_evaluated}")
+
+    # Save results to JSON
+    results = {
+        "vocab_size": len(vocab),
+        "n_evaluated": n_evaluated,
+        "results": prompt_results,
+    }
+    os.makedirs("outputs", exist_ok=True)
+    with open("outputs/experiment2_results.json", "w") as f:
+        json.dump(results, f, indent=2)
+    tqdm.write("Results saved to outputs/experiment2_results.json")
 
 
 if __name__ == "__main__":
