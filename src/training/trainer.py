@@ -124,9 +124,8 @@ def train_contrastive(
     alpha: float = 1.0,
     device: str = "cuda",
 ) -> list[float]:
-    clip.model.to(device)
-
     apply_lora_to_clip(clip.model, rank=rank, alpha=alpha)
+    clip.model.to(device)
     lora_params = list(get_lora_parameters(clip.model))
 
     if len(lora_params) == 0:
