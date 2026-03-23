@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import json
-import os
 import sys
 from typing import Dict
 from pathlib import Path
@@ -281,22 +279,6 @@ def main() -> None:
         f"{partial_metrics['R@5']:.3f} "
         f"{partial_metrics['F1@5']:.3f}"
     )
-
-    # Save results to JSON
-    results = {
-        "vocab_size": len(vocab),
-        "n_train": len(train_recipes),
-        "n_test": len(test_recipes),
-        "results": [
-            {"setup": "Zero-shot", **{k: round(v, 4) for k, v in zero_shot_metrics.items()}},
-            {"setup": "Projection head", **{k: round(v, 4) for k, v in projection_metrics.items()}},
-            {"setup": "Partial unfreeze", **{k: round(v, 4) for k, v in partial_metrics.items()}},
-        ],
-    }
-    os.makedirs("outputs", exist_ok=True)
-    with open("outputs/experiment3_results.json", "w") as f:
-        json.dump(results, f, indent=2)
-    print("\nResults saved to outputs/experiment3_results.json")
 
 
 if __name__ == "__main__":

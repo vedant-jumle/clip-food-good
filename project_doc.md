@@ -48,46 +48,100 @@ This is a **multi-label classification problem**, since multiple ingredients can
 
 # 3. Dataset
 
-## Recipe1M+
+You need:
 
-We use **Recipe1M+** exclusively — the standard large-scale dataset for food-image/recipe research.
+```
+(image, ingredient list)
+```
+
+pairs.
+
+## Recommended Dataset Options
+
+### Option 1 — Recipe1M (best)
+
+Contains:
+
+* 1M+ recipes
+* ingredient lists
+* food images
+
+Paper:
 
 ```
 Recipe1M+: A Dataset for Learning Cross-Modal Embeddings for Cooking Recipes
 ```
 
-Each sample is an `(image, ingredient list)` pair derived from web-scraped recipes.
+Pros:
 
-**Scale:** ~1M recipes with images across 16 image shards (`recipe1M+_0.tar` through `recipe1M+_f.tar`). Images are hosted at `wednesday.csail.mit.edu` and require registration to download.
+* large
+* standard in literature
 
-**Files used:**
+Cons:
 
-| File | Purpose |
-|---|---|
-| `layer1.json` | Recipe metadata (title, partition, ingredient strings) |
-| `det_ingrs.json` | Detected/cleaned ingredient labels per recipe |
-| `recipe1M+_images/recipe1M+_*.tar` | Image shards (one per hex digit 0–f) |
+* requires some preprocessing
 
-**Current status:** Shard `0` downloaded (~1,880 usable train/test samples). Additional shards being downloaded — each shard adds ~60k recipes. Experiments 4 and 5 require multiple shards for meaningful fine-tuning results.
+---
 
-**Partitions:** `train`, `val`, `test` — defined in `layer1.json`. Vocabulary is built from train split only.
+### Option 2 — VireoFood172 (easier)
+
+Contains:
+
+* food images
+* ingredient annotations
+
+Good for quick experimentation.
+
+---
+
+### Option 3 — Food-101 (fallback)
+
+Contains:
+
+* food images
+* dish labels
+
+You must map dishes → ingredients manually.
 
 ---
 
 ## Ingredient Vocabulary
 
-A fixed vocabulary of the top-200 most frequent visually-detectable ingredients is built from the training split.
+You should build a fixed ingredient vocabulary.
 
-Non-visual ingredients are excluded:
+Example:
 
 ```
-salt, pepper, water, oil, sugar, flour, butter,
-baking powder, baking soda, vanilla extract,
-olive oil, vegetable oil, black pepper, kosher salt,
-sea salt, garlic powder, onion powder, paprika, cumin, vinegar
+ingredients = [
+    "tomato",
+    "basil",
+    "garlic",
+    "onion",
+    "cheese",
+    "chicken",
+    "beef",
+    "pasta",
+    "rice",
+    "egg",
+    ...
+]
 ```
 
-Vocabulary size: **200 ingredients** (`top_n=200, min_freq=2`).
+Typical size:
+
+```
+100–300 ingredients
+```
+
+Remove ingredients like:
+
+```
+salt
+pepper
+water
+```
+
+because they are **not visually detectable**.
 
 ---
 
@@ -405,30 +459,11 @@ Evaluation: zero-shot inference after fine-tuning (same setup as Experiment 1), 
 
 ---
 
-## Experiment 5 — Backbone Ablation (planned)
+## Experiment 5 — SigLIP Backbone (planned)
 
-The goal is to isolate two distinct effects: **loss function** and **architecture**. A naive CLIP vs SigLIP comparison conflates both — ViT-B/32 vs ViT-B/16 differs in patch size and capacity, so any performance gap can't be cleanly attributed to the loss alone.
+Repeat Experiment 4 with SigLIP (`google/siglip-base-patch16-224`) and sigmoid loss.
 
-To address this, Experiment 5 is split into two sub-experiments:
-
-**5a — SigLIP ViT-B/16 + Sigmoid loss**
-Swap the full backbone to `google/siglip-base-patch16-224` with LoRA. Tests the combined effect of a different architecture and loss.
-
-**5b — CLIP ViT-B/32 + Sigmoid loss (same arch as Exp 4)**
-Keep the CLIP backbone but replace InfoNCE with sigmoid contrastive loss. This isolates the loss effect independently of architecture. Implementing sigmoid loss on top of OpenCLIP is ~20 lines — cheap to add and makes the comparison interpretable.
-
-**Why sigmoid loss is motivated for this task:**
-InfoNCE forces a softmax over the batch — exactly one image is the correct match per text. But food images share many ingredients across a batch (tomatoes appear everywhere), creating false negatives in the loss: the model is penalized for correctly matching "tomato" to an image that genuinely contains tomatoes. SigLIP's sigmoid scores each pair independently, so this problem doesn't arise. This is structurally the right loss for multi-label retrieval.
-
-**Expected comparison:**
-
-| Exp | Backbone | Loss | What it isolates |
-|---|---|---|---|
-| 4 | CLIP ViT-B/32 | InfoNCE | LoRA baseline |
-| 5b | CLIP ViT-B/32 | Sigmoid | Loss only, same arch |
-| 5a | SigLIP ViT-B/16 | Sigmoid | Arch + loss together |
-
-The gap between 4 and 5b = loss effect. The gap between 5b and 5a = architecture effect.
+The sigmoid loss scores each image-text pair independently, which is better suited to multi-label recognition where one image has many correct ingredient texts.
 
 ---
 
@@ -440,8 +475,7 @@ The gap between 4 and 5b = loss effect. The gap between 5b and 5a = architecture
 | 2 | CLIP ViT-B/32 | none | — | done |
 | 3 | CLIP ViT-B/32 | head / partial unfreeze | BCE | done |
 | 4 | CLIP ViT-B/32 | LoRA (both encoders, r=32) | InfoNCE | planned |
-| 5a | SigLIP ViT-B/16 | LoRA (both encoders, r=32) | Sigmoid | planned |
-| 5b | CLIP ViT-B/32 | LoRA (both encoders, r=32) | Sigmoid | planned |
+| 5 | SigLIP B/16 | LoRA (both encoders, r=32) | Sigmoid | planned |
 
 ---
 

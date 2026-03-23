@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import json
-import os
 import sys
 from pathlib import Path
 
@@ -149,46 +147,10 @@ def main() -> None:
     text_emb_b = clip.encode_text(make_prompts(vocab, "B"))
     preds_ada, labels_ada = evaluate_zero_shot(loader, clip, vocab, text_emb_b, adaptive=True)
     k_ada = preds_ada.size(1)
-    p_ada = precision_at_k(preds_ada, labels_ada, k=k_ada)
-    r_ada = recall_at_k(preds_ada, labels_ada, k=k_ada)
-    f1_ada = f1_at_k(preds_ada, labels_ada, k=k_ada)
     print(f"Adaptive k selected: {k_ada}")
-    print(f"Precision@k: {p_ada:.2f}")
-    print(f"Recall@k:    {r_ada:.2f}")
-    print(f"F1@k:        {f1_ada:.2f}")
-
-    # Save results to JSON
-    results = {
-        "vocab_size": len(vocab),
-        "n_evaluated": int(labels.size(0)),
-        "zero_shot": {
-            "prompt": "A",
-            "P@1": round(precision_at_k(preds[:, :1], labels, k=1), 4),
-            "P@3": round(precision_at_k(preds[:, :3], labels, k=3), 4),
-            "P@5": round(precision_at_k(preds, labels, k=5), 4),
-            "R@5": round(recall_at_k(preds, labels, k=5), 4),
-            "F1@5": round(f1_at_k(preds, labels, k=5), 4),
-        },
-        "ensemble": {
-            "prompts": ["A", "B", "C", "D"],
-            "P@1": round(precision_at_k(preds_ens[:, :1], labels_ens, k=1), 4),
-            "P@3": round(precision_at_k(preds_ens[:, :3], labels_ens, k=3), 4),
-            "P@5": round(precision_at_k(preds_ens, labels_ens, k=5), 4),
-            "R@5": round(recall_at_k(preds_ens, labels_ens, k=5), 4),
-            "F1@5": round(f1_at_k(preds_ens, labels_ens, k=5), 4),
-        },
-        "adaptive": {
-            "prompt": "B",
-            "k_selected": k_ada,
-            "P@k": round(p_ada, 4),
-            "R@k": round(r_ada, 4),
-            "F1@k": round(f1_ada, 4),
-        },
-    }
-    os.makedirs("outputs", exist_ok=True)
-    with open("outputs/experiment1_results.json", "w") as f:
-        json.dump(results, f, indent=2)
-    print("\nResults saved to outputs/experiment1_results.json")
+    print(f"Precision@k: {precision_at_k(preds_ada, labels_ada, k=k_ada):.2f}")
+    print(f"Recall@k:    {recall_at_k(preds_ada, labels_ada, k=k_ada):.2f}")
+    print(f"F1@k:        {f1_at_k(preds_ada, labels_ada, k=k_ada):.2f}")
 
 
 if __name__ == "__main__":
