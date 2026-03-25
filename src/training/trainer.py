@@ -124,6 +124,8 @@ def train_contrastive(
     rank: int = 32,
     alpha: float = 1.0,
     device: str = "cuda",
+    patience: int = 5,
+    min_delta: float = 0.001,
 ) -> list[float]:
     apply_lora_to_clip(clip.model, rank=rank, alpha=alpha)
     clip.model.to(device)
@@ -136,6 +138,8 @@ def train_contrastive(
     criterion = ClipLoss()
 
     epoch_losses: list[float] = []
+    best_loss = float("inf")
+    epochs_without_improvement = 0
 
     clip.model.train()
 
@@ -172,6 +176,17 @@ def train_contrastive(
 
         avg_loss = running_loss / max(1, num_batches)
         epoch_losses.append(avg_loss)
-        epoch_bar.set_postfix(avg_loss=f"{avg_loss:.4f}")
+
+        if avg_loss < best_loss - min_delta:
+            best_loss = avg_loss
+            epochs_without_improvement = 0
+        else:
+            epochs_without_improvement += 1
+
+        epoch_bar.set_postfix(avg_loss=f"{avg_loss:.4f}", no_improve=epochs_without_improvement)
+
+        if epochs_without_improvement >= patience:
+            tqdm.write(f"Early stopping at epoch {epoch + 1} (no improvement for {patience} epochs)")
+            break
 
     return epoch_losses
