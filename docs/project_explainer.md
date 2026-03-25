@@ -30,13 +30,13 @@ We parse this into `(image, ingredient_list)` pairs, build a vocabulary of the ~
 
 ---
 
-## The Three Experiments
+## The Five Experiments
 
 ### Experiment 1 — Zero-shot Baseline
 We freeze CLIP completely and run inference with no training. For each ingredient, we construct a simple text prompt (`"tomato"`, `"cheese"`, etc.), encode it, and rank ingredients by cosine similarity to the image embedding. This tells us how much CLIP already knows about food ingredients out of the box.
 
 ### Experiment 2 — Prompt Engineering
-CLIP is known to be sensitive to how text prompts are phrased. We test four prompt templates:
+CLIP is known to be sensitive to how text prompts are phrased. We test eight prompt templates:
 
 | Type | Example |
 |---|---|
@@ -44,8 +44,12 @@ CLIP is known to be sensitive to how text prompts are phrased. We test four prom
 | B — Dish phrase | `"a dish containing tomato"` |
 | C — Cooking context | `"a meal with tomato ingredient"` |
 | D — Visual context | `"a dish with visible tomato"` |
+| E — Food photo | `"food photo showing tomato"` |
+| F — Recipe label | `"recipe ingredient: tomato"` |
+| G — Contains | `"this food contains tomato"` |
+| H — Fresh | `"fresh tomato"` |
 
-We evaluate all four under identical conditions and compare. This tells us whether better prompt design alone — without any training — can improve performance.
+We also test two ensemble variants: ENS4 (A+B+C+D averaged) and ENS7 (B+C+D+E+F+G+H, excluding the weakest single-word prompt). This tells us whether better prompt design alone — without any training — can improve performance.
 
 ### Experiment 3 — Lightweight Fine-tuning
 We test whether adapting the model to the food domain improves things further. Two strategies:
@@ -56,6 +60,21 @@ We test whether adapting the model to the food domain improves things further. T
 
 The output table compares all three setups (zero-shot, projection head, partial unfreeze) side by side on Precision@K, Recall@K, and F1@K.
 
+### Experiment 4 — LoRA Contrastive Fine-tuning
+Instead of a classification head, we fine-tune both CLIP encoders using the same contrastive objective CLIP was originally trained on (InfoNCE loss). Rather than full fine-tuning — which would destroy pretrained representations at small data scale — we use **LoRA** (Low-Rank Adaptation): small trainable rank decomposition matrices (A, B) are injected into the attention output projections of every transformer block in both encoders. All original weights remain frozen; only the LoRA parameters (~500k–1M, ~1% of total) are trained.
+
+The text input is built directly from the recipe's ingredient list: `"ingredients: tomato, cheese, basil"`. This keeps the problem as image-text matching rather than classification, and trains the model to pull food images closer to their ingredient descriptions in embedding space.
+
+After training, evaluation reuses the zero-shot pipeline from Experiment 1 — no classification head needed.
+
+### Experiment 5 — Backbone Ablation (SigLIP vs CLIP)
+To isolate whether gains from Experiment 4 come from the architecture or the loss function, we run two variants:
+
+- **5a** — SigLIP ViT-B/16 with sigmoid multi-label loss
+- **5b** — CLIP ViT-B/32 with sigmoid loss (same architecture as Experiments 1–4, different loss)
+
+Comparing 5a vs 5b isolates the architecture effect; comparing 5b vs Experiment 4 isolates the loss function effect.
+
 ---
 
 ## Component Map
@@ -63,13 +82,14 @@ The output table compares all three setups (zero-shot, projection head, partial 
 ```
 data/recipe1m/          → raw data (images + JSON annotations)
 src/data/               → parsing pipeline: loads JSON, builds vocab, serves batches
-src/models/             → CLIP wrapper + projection head
+src/models/             → CLIP wrapper, projection head, LoRA injection (lora.py)
 src/experiments/        → prompts, scoring, metrics (pure functions, no training)
-src/training/           → training loop for fine-tuning experiments
+src/training/           → training loops: BCE fine-tuning + contrastive LoRA training
 src/visualization/      → Grad-CAM: shows which image regions drove each prediction
 src/run_experiment1.py  → runs Experiment 1
 src/run_experiment2.py  → runs Experiment 2
 src/run_experiment3.py  → runs Experiment 3
+src/run_experiment4.py  → runs Experiment 4 (planned)
 src/run_visualization.py→ generates heatmap overlays
 ```
 
@@ -91,9 +111,11 @@ We evaluate at K=1, 3, and 5.
 
 Honestly, no single component here is new. CLIP zero-shot recognition, prompt engineering, and projection head fine-tuning are all established techniques.
 
-The contribution is **empirical**: we run a controlled, apples-to-apples comparison of these strategies specifically on **multi-label ingredient recognition** — a harder task than dish classification (which most prior work focuses on). The study cleanly isolates the effect of prompt design from the effect of fine-tuning, which most papers don't do. The practical finding — that contextual prompts outperform single-word prompts even without training — is a useful, actionable result for anyone building food-understanding systems.
+The contribution is **empirical**: we run a controlled, apples-to-apples comparison of these strategies specifically on **multi-label ingredient recognition** — a harder task than dish classification (which most prior work focuses on). The study cleanly isolates the effect of prompt design, fine-tuning strategy, loss function, and backbone — which most papers don't do simultaneously. The practical finding — that contextual prompts outperform single-word prompts even without training — is a useful, actionable result for anyone building food-understanding systems.
 
-The framing is best described as: **a structured empirical investigation into how CLIP transfers to ingredient-level food understanding**, with practical findings on prompt sensitivity and domain adaptation.
+The LoRA contrastive experiment (Experiment 4) adds a stronger technical contribution: parameter-efficient domain adaptation of both CLIP encoders using the original contrastive objective, evaluated on a large-scale food dataset. This is distinct from prior work that either fine-tunes classification heads or performs full fine-tuning.
+
+The framing is best described as: **a structured empirical investigation into how CLIP transfers to ingredient-level food understanding**, with practical findings on prompt sensitivity, fine-tuning strategy, and parameter-efficient adaptation.
 
 ---
 
