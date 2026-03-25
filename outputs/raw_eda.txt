@@ -1,0 +1,434 @@
+(CV) [vvjumle@login03 clip-food-good]$ python src/eda.py
+Loading JSON indexes (this may take a moment)...
+Building image index from: data/recipe1m/0
+
+============================================================
+  1. JSON-level counts (before image filter)
+============================================================
+  det_ingrs entries  :  1,029,720
+  layer1 entries     :  1,029,720
+  layer2 entries     :    402,760
+  shared (det∩layer1):  1,029,720
+
+============================================================
+  2. Downloaded images
+============================================================
+  Total image files  :    424,304
+
+============================================================
+  3. Recipe statistics (with images)
+============================================================
+Processing recipes: 100%|████████████████████████████████████████████████████████████| 1029720/1029720 [00:01<00:00, 518654.97it/s]
+
+  Recipes with images (usable):
+    Total            :     18,496
+    train            :     12,801
+    val              :      2,755
+    test             :      2,940
+    unknown          :          0
+
+  Dropped (no image) :  1,010,201
+  Dropped (no ingrs) :      1,023
+
+============================================================
+  4. Ingredient statistics
+============================================================
+  Ingredients per recipe:
+    Mean             :       8.83
+    Median           :          8
+    Min / Max        :     1 / 62
+    25th / 75th pct  :     6 / 11
+
+  Unique ingredients (raw)   :    6,148
+  Unique ingredients (visual):    6,128
+
+  Ingredient frequency distribution:
+    >= 1000     :       22 ingredients
+    100-999     :      228 ingredients
+    10-99       :    1,257 ingredients
+    2-9         :    2,573 ingredients
+    1           :    2,068 ingredients
+
+============================================================
+  5. Top 30 ingredients (all)
+============================================================
+  Rank  Ingredient                        Count
+  ------------------------------------------------------------
+  1     salt                              7,007
+  2     butter                            5,260
+  3     sugar                             3,349
+  4     eggs                              3,318
+  5     water                             2,781
+  6     all-purpose flour                 2,717
+  7     olive oil                         2,717
+  8     milk                              2,563
+  9     garlic cloves                     2,145
+  10    white sugar                       1,843
+  11    vanilla extract                   1,808
+  12    egg                               1,777
+  13    baking powder                     1,771
+  14    onion                             1,751
+  15    flour                             1,736
+  16    brown sugar                       1,694
+  17    vegetable oil                     1,509
+  18    baking soda                       1,507
+  19    onions                            1,359
+  20    salt and pepper                   1,225
+  21    parmesan cheese                   1,089
+  22    pepper                            1,060
+  23    lemon juice                         984
+  24    garlic powder                       973
+  25    ground cinnamon                     906
+  26    sour cream                          899
+  27    vanilla                             893
+  28    cinnamon                            876
+  29    cream cheese                        869
+  30    unsalted butter                     867
+
+============================================================
+  6. Top 30 visual ingredients (excluding non-visual)
+============================================================
+  Rank  Ingredient                        Count
+  ------------------------------------------------------------
+  1     eggs                              3,318
+  2     all-purpose flour                 2,717
+  3     milk                              2,563
+  4     garlic cloves                     2,145
+  5     white sugar                       1,843
+  6     egg                               1,777
+  7     onion                             1,751
+  8     brown sugar                       1,694
+  9     onions                            1,359
+  10    salt and pepper                   1,225
+  11    parmesan cheese                   1,089
+  12    lemon juice                         984
+  13    ground cinnamon                     906
+  14    sour cream                          899
+  15    vanilla                             893
+  16    cinnamon                            876
+  17    cream cheese                        869
+  18    unsalted butter                     867
+  19    soy sauce                           846
+  20    honey                               819
+  21    ground black pepper                 807
+  22    garlic clove                        803
+  23    garlic                              760
+  24    green onions                        729
+  25    carrots                             694
+  26    tomatoes                            689
+  27    mayonnaise                          643
+  28    granulated sugar                    636
+  29    celery                              596
+  30    cornstarch                          576
+
+============================================================
+  7. Vocab coverage at different top-N sizes
+============================================================
+  top_n    vocab size   % recipes covered (>=1 match)
+  ------------------------------------------------------------
+  50       50           86.0%
+  100      100          91.3%
+  200      200          95.4%
+  500      500          98.0%
+  1000     1000         99.2%
+
+============================================================
+  8. Images available per recipe (layer2)
+============================================================
+  1 image(s):    6,584 recipes
+  2 image(s):    2,417 recipes
+  3 image(s):    1,678 recipes
+  4 image(s):    1,205 recipes
+  5 image(s):      913 recipes
+  6 image(s):      677 recipes
+  7 image(s):      566 recipes
+  8 image(s):      460 recipes
+  9 image(s):      355 recipes
+  10 image(s):      280 recipes
+  11 image(s):      235 recipes
+  12 image(s):      183 recipes
+  13 image(s):      157 recipes
+  14 image(s):      171 recipes
+  15 image(s):      112 recipes
+  16 image(s):      122 recipes
+  17 image(s):      118 recipes
+  18 image(s):       99 recipes
+  19 image(s):       80 recipes
+  20 image(s):       73 recipes
+  21 image(s):       81 recipes
+  22 image(s):       60 recipes
+  23 image(s):       74 recipes
+  24 image(s):       66 recipes
+  25 image(s):       63 recipes
+  26 image(s):       53 recipes
+  27 image(s):       52 recipes
+  28 image(s):       34 recipes
+  29 image(s):       42 recipes
+  30 image(s):       32 recipes
+  31 image(s):       44 recipes
+  32 image(s):       41 recipes
+  33 image(s):       34 recipes
+  34 image(s):       34 recipes
+  35 image(s):       46 recipes
+  36 image(s):       29 recipes
+  37 image(s):       26 recipes
+  38 image(s):       30 recipes
+  39 image(s):       27 recipes
+  40 image(s):       38 recipes
+  41 image(s):       24 recipes
+  42 image(s):       20 recipes
+  43 image(s):       29 recipes
+  44 image(s):       25 recipes
+  45 image(s):       24 recipes
+  46 image(s):       27 recipes
+  47 image(s):       16 recipes
+  48 image(s):       19 recipes
+  49 image(s):       19 recipes
+  50 image(s):       18 recipes
+  51 image(s):       26 recipes
+  52 image(s):       21 recipes
+  53 image(s):       18 recipes
+  54 image(s):       22 recipes
+  55 image(s):       14 recipes
+  56 image(s):       20 recipes
+  57 image(s):       13 recipes
+  58 image(s):       13 recipes
+  59 image(s):       15 recipes
+  60 image(s):       17 recipes
+  61 image(s):       14 recipes
+  62 image(s):       16 recipes
+  63 image(s):       13 recipes
+  64 image(s):       13 recipes
+  65 image(s):       18 recipes
+  66 image(s):       11 recipes
+  67 image(s):       11 recipes
+  68 image(s):       11 recipes
+  69 image(s):       10 recipes
+  70 image(s):       11 recipes
+  71 image(s):        9 recipes
+  72 image(s):       10 recipes
+  73 image(s):       12 recipes
+  74 image(s):        7 recipes
+  75 image(s):        7 recipes
+  76 image(s):        9 recipes
+  77 image(s):        8 recipes
+  78 image(s):        6 recipes
+  79 image(s):        8 recipes
+  80 image(s):       10 recipes
+  81 image(s):        5 recipes
+  82 image(s):       13 recipes
+  83 image(s):        9 recipes
+  84 image(s):        8 recipes
+  85 image(s):        4 recipes
+  86 image(s):        8 recipes
+  87 image(s):        6 recipes
+  88 image(s):       12 recipes
+  89 image(s):        2 recipes
+  90 image(s):        5 recipes
+  91 image(s):        9 recipes
+  92 image(s):        5 recipes
+  93 image(s):        5 recipes
+  94 image(s):        6 recipes
+  95 image(s):        8 recipes
+  96 image(s):       11 recipes
+  97 image(s):        4 recipes
+  98 image(s):        3 recipes
+  99 image(s):        7 recipes
+  100 image(s):        2 recipes
+  101 image(s):        5 recipes
+  102 image(s):        2 recipes
+  103 image(s):        5 recipes
+  104 image(s):        4 recipes
+  105 image(s):        7 recipes
+  106 image(s):        8 recipes
+  107 image(s):        1 recipes
+  108 image(s):        4 recipes
+  109 image(s):        2 recipes
+  110 image(s):        5 recipes
+  111 image(s):        7 recipes
+  112 image(s):        2 recipes
+  113 image(s):        6 recipes
+  114 image(s):        4 recipes
+  115 image(s):        6 recipes
+  116 image(s):        3 recipes
+  117 image(s):        3 recipes
+  118 image(s):        2 recipes
+  119 image(s):        3 recipes
+  120 image(s):        3 recipes
+  121 image(s):        1 recipes
+  122 image(s):        2 recipes
+  123 image(s):        5 recipes
+  124 image(s):        4 recipes
+  125 image(s):        2 recipes
+  126 image(s):        2 recipes
+  127 image(s):        2 recipes
+  128 image(s):        4 recipes
+  129 image(s):        2 recipes
+  130 image(s):        1 recipes
+  131 image(s):        1 recipes
+  132 image(s):        2 recipes
+  133 image(s):        2 recipes
+  134 image(s):       10 recipes
+  135 image(s):        7 recipes
+  136 image(s):        2 recipes
+  137 image(s):        4 recipes
+  138 image(s):        2 recipes
+  139 image(s):        4 recipes
+  140 image(s):        3 recipes
+  141 image(s):        3 recipes
+  142 image(s):        2 recipes
+  143 image(s):        3 recipes
+  144 image(s):        1 recipes
+  145 image(s):        1 recipes
+  146 image(s):        1 recipes
+  147 image(s):        1 recipes
+  148 image(s):        2 recipes
+  149 image(s):        2 recipes
+  150 image(s):        2 recipes
+  151 image(s):        2 recipes
+  152 image(s):        1 recipes
+  153 image(s):        2 recipes
+  154 image(s):        1 recipes
+  155 image(s):        4 recipes
+  156 image(s):        2 recipes
+  157 image(s):        2 recipes
+  158 image(s):        3 recipes
+  160 image(s):        1 recipes
+  161 image(s):        2 recipes
+  162 image(s):        3 recipes
+  163 image(s):        3 recipes
+  164 image(s):        3 recipes
+  166 image(s):        4 recipes
+  167 image(s):        2 recipes
+  168 image(s):        1 recipes
+  169 image(s):        1 recipes
+  171 image(s):        4 recipes
+  172 image(s):        3 recipes
+  173 image(s):        2 recipes
+  175 image(s):        2 recipes
+  176 image(s):        1 recipes
+  177 image(s):        2 recipes
+  178 image(s):        2 recipes
+  179 image(s):        2 recipes
+  180 image(s):        3 recipes
+  182 image(s):        1 recipes
+  183 image(s):        1 recipes
+  184 image(s):        1 recipes
+  187 image(s):        1 recipes
+  188 image(s):        1 recipes
+  189 image(s):        2 recipes
+  190 image(s):        2 recipes
+  192 image(s):        1 recipes
+  193 image(s):        1 recipes
+  195 image(s):        1 recipes
+  196 image(s):        2 recipes
+  197 image(s):        1 recipes
+  198 image(s):        1 recipes
+  199 image(s):        3 recipes
+  200 image(s):        3 recipes
+  202 image(s):        1 recipes
+  203 image(s):        1 recipes
+  204 image(s):        1 recipes
+  207 image(s):        2 recipes
+  208 image(s):        2 recipes
+  209 image(s):        1 recipes
+  210 image(s):        1 recipes
+  211 image(s):        3 recipes
+  213 image(s):        1 recipes
+  218 image(s):        1 recipes
+  219 image(s):        2 recipes
+  220 image(s):        2 recipes
+  221 image(s):        1 recipes
+  222 image(s):        1 recipes
+  225 image(s):        2 recipes
+  226 image(s):        1 recipes
+  228 image(s):        1 recipes
+  229 image(s):        1 recipes
+  230 image(s):        1 recipes
+  231 image(s):        1 recipes
+  234 image(s):        1 recipes
+  235 image(s):        1 recipes
+  240 image(s):        1 recipes
+  241 image(s):        1 recipes
+  244 image(s):        1 recipes
+  245 image(s):        1 recipes
+  246 image(s):        1 recipes
+  247 image(s):        1 recipes
+  249 image(s):        2 recipes
+  253 image(s):        1 recipes
+  255 image(s):        1 recipes
+  257 image(s):        2 recipes
+  258 image(s):        1 recipes
+  262 image(s):        1 recipes
+  263 image(s):        1 recipes
+  265 image(s):        1 recipes
+  268 image(s):        1 recipes
+  271 image(s):        2 recipes
+  275 image(s):        1 recipes
+  276 image(s):        1 recipes
+  277 image(s):        2 recipes
+  279 image(s):        1 recipes
+  280 image(s):        2 recipes
+  282 image(s):        1 recipes
+  294 image(s):        1 recipes
+  297 image(s):        1 recipes
+  300 image(s):        1 recipes
+  302 image(s):        1 recipes
+  304 image(s):        1 recipes
+  307 image(s):        1 recipes
+  310 image(s):        1 recipes
+  314 image(s):        1 recipes
+  317 image(s):        1 recipes
+  318 image(s):        1 recipes
+  319 image(s):        1 recipes
+  323 image(s):        1 recipes
+  328 image(s):        1 recipes
+  329 image(s):        1 recipes
+  330 image(s):        1 recipes
+  333 image(s):        1 recipes
+  334 image(s):        1 recipes
+  341 image(s):        1 recipes
+  345 image(s):        1 recipes
+  349 image(s):        1 recipes
+  355 image(s):        2 recipes
+  357 image(s):        1 recipes
+  364 image(s):        2 recipes
+  373 image(s):        1 recipes
+  375 image(s):        1 recipes
+  377 image(s):        1 recipes
+  379 image(s):        1 recipes
+  386 image(s):        1 recipes
+  392 image(s):        1 recipes
+  413 image(s):        1 recipes
+  416 image(s):        1 recipes
+  424 image(s):        1 recipes
+  431 image(s):        1 recipes
+  435 image(s):        1 recipes
+  450 image(s):        1 recipes
+  502 image(s):        1 recipes
+  503 image(s):        1 recipes
+  506 image(s):        1 recipes
+  515 image(s):        1 recipes
+  533 image(s):        1 recipes
+  570 image(s):        1 recipes
+  590 image(s):        1 recipes
+  606 image(s):        1 recipes
+  636 image(s):        1 recipes
+  644 image(s):        1 recipes
+  655 image(s):        1 recipes
+  700 image(s):        1 recipes
+  713 image(s):        1 recipes
+  742 image(s):        2 recipes
+  800 image(s):        1 recipes
+  921 image(s):        1 recipes
+  966 image(s):        1 recipes
+  991 image(s):        1 recipes
+  997 image(s):        1 recipes
+  1035 image(s):        1 recipes
+  1325 image(s):        1 recipes
+  1400 image(s):        1 recipes
+  1646 image(s):        1 recipes
+
+============================================================
+  Done.
+============================================================

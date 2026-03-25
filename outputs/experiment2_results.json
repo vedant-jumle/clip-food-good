@@ -1,0 +1,76 @@
+{
+  "vocab_size": 200,
+  "n_evaluated": 4465,
+  "results": [
+    {
+      "prompt": "A",
+      "label": "A  (single word)",
+      "P@5": 0.0862,
+      "R@5": 0.1141,
+      "F1@5": 0.0905
+    },
+    {
+      "prompt": "B",
+      "label": "B  (dish containing X)",
+      "P@5": 0.0991,
+      "R@5": 0.1369,
+      "F1@5": 0.1054
+    },
+    {
+      "prompt": "C",
+      "label": "C  (meal with X ingr.)",
+      "P@5": 0.0943,
+      "R@5": 0.1271,
+      "F1@5": 0.0998
+    },
+    {
+      "prompt": "D",
+      "label": "D  (visible X)",
+      "P@5": 0.0966,
+      "R@5": 0.1331,
+      "F1@5": 0.1029
+    },
+    {
+      "prompt": "E",
+      "label": "E  (food photo of X)",
+      "P@5": 0.0941,
+      "R@5": 0.1274,
+      "F1@5": 0.0997
+    },
+    {
+      "prompt": "F",
+      "label": "F  (recipe ingr: X)",
+      "P@5": 0.0973,
+      "R@5": 0.1332,
+      "F1@5": 0.1032
+    },
+    {
+      "prompt": "G",
+      "label": "G  (this food contains X)",
+      "P@5": 0.1004,
+      "R@5": 0.137,
+      "F1@5": 0.1065
+    },
+    {
+      "prompt": "H",
+      "label": "H  (fresh X)",
+      "P@5": 0.0863,
+      "R@5": 0.1158,
+      "F1@5": 0.0911
+    },
+    {
+      "prompt": "ENS4",
+      "label": "ENS4 (A+B+C+D)",
+      "P@5": 0.0968,
+      "R@5": 0.1318,
+      "F1@5": 0.1026
+    },
+    {
+      "prompt": "ENS7",
+      "label": "ENS7 (B-H, no A)",
+      "P@5": 0.1002,
+      "R@5": 0.1368,
+      "F1@5": 0.1063
+    }
+  ]
+}
