@@ -7,6 +7,9 @@ import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from pqdm.processes import pqdm as pqdm_proc
+from pqdm.threads import pqdm as pqdm_threads
+
 
 def read_json(path: str | Path) -> Any:
     path = Path(path)
@@ -94,12 +97,24 @@ def _cache_path(image_root: str | Path, cache_dir: Path) -> Path:
     return cache_dir / f"recipes_cache_{key}.pkl"
 
 
-def build_image_index(image_root: str | Path) -> Dict[str, str]:
-    """Scan image_root once and return a dict mapping image stem -> full path."""
+def _scan_subdir(subdir: Path) -> Dict[str, str]:
     index: Dict[str, str] = {}
-    for p in Path(image_root).rglob("*"):
+    for p in subdir.rglob("*"):
         if p.suffix.lower() in (".jpg", ".jpeg", ".png"):
             index[p.stem] = str(p)
+    return index
+
+
+def build_image_index(image_root: str | Path) -> Dict[str, str]:
+    """Scan image_root once and return a dict mapping image stem -> full path."""
+    root = Path(image_root)
+    subdirs = [p for p in root.iterdir() if p.is_dir()]
+    if not subdirs:
+        return _scan_subdir(root)
+    results = pqdm_proc(subdirs, _scan_subdir, n_jobs=len(subdirs), desc="Scanning image dirs")
+    index: Dict[str, str] = {}
+    for partial in results:
+        index.update(partial)
     return index
 
 
@@ -120,29 +135,44 @@ def load_recipes(
             all_recipes: List[Dict[str, Any]] = pickle.load(f)
     else:
         print("Building recipe index (first run, this may take a while)...")
-        det_index = index_det_ingrs(det_ingrs_path)
-        layer_index = index_layer1(layer1_path)
-        layer2_index = index_layer2(layer2_path)
+
+        def _load(args):
+            name, fn, path = args
+            print(f"  Loading {name}...")
+            return fn(path)
+
+        tasks = [
+            ("det_ingrs", index_det_ingrs, det_ingrs_path),
+            ("layer1",    index_layer1,    layer1_path),
+            ("layer2",    index_layer2,    layer2_path),
+        ]
+        results = pqdm_threads(tasks, _load, n_jobs=3, desc="Loading JSON files")
+        det_index, layer_index, layer2_index = results
+
         image_index = build_image_index(image_root)
 
-        all_recipes = []
-        for recipe_id in det_index.keys() & layer_index.keys():
+        common_ids = list(det_index.keys() & layer_index.keys())
+
+        def _build_entry(recipe_id):
             meta = layer_index[recipe_id]
             ingredients = det_index[recipe_id]
             if not ingredients:
-                continue
+                return None
             image_paths = [
                 image_index[img_id]
                 for img_id in layer2_index.get(recipe_id, [])
                 if img_id in image_index
             ]
-            all_recipes.append({
+            return {
                 "id": recipe_id,
                 "title": meta["title"],
                 "partition": meta["partition"],
                 "ingredients": ingredients,
                 "image_paths": image_paths,
-            })
+            }
+
+        entries = pqdm_threads(common_ids, _build_entry, n_jobs=4, desc="Building recipe entries")
+        all_recipes = [e for e in entries if e is not None]
 
         cache_dir.mkdir(parents=True, exist_ok=True)
         with open(cache_file, "wb") as f:

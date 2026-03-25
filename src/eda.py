@@ -19,7 +19,7 @@ from src.data.recipe1m import (
 
 DET_INGRS = os.environ.get("RECIPE1M_DET_INGRS", "data/recipe1m/det_ingrs.json")
 LAYER1    = os.environ.get("RECIPE1M_LAYER1",    "data/recipe1m/layer1.json")
-LAYER2    = os.environ.get("RECIPE1M_LAYER2",    "data/recipe1m/layer2.json")
+LAYER2    = os.environ.get("RECIPE1M_LAYER2",    "data/recipe1m/layer2+.json")
 IMAGE_ROOT = os.environ.get("RECIPE1M_IMAGE_ROOT", "data/recipe1m/0")
 
 NON_VISUAL = {

@@ -22,7 +22,7 @@ from src.training.trainer import train
 # Data paths
 DET_INGRS = "data/recipe1m/det_ingrs.json"
 LAYER1 = "data/recipe1m/layer1.json"
-LAYER2 = "data/recipe1m/layer2.json"
+LAYER2 = os.environ.get("RECIPE1M_LAYER2", "data/recipe1m/layer2+.json")
 IMAGE_ROOT = os.environ.get("RECIPE1M_IMAGE_ROOT", "data/recipe1m/0")
 NUM_WORKERS = int(os.environ.get("RECIPE1M_NUM_WORKERS", "0"))
 
