@@ -30,7 +30,7 @@ We parse this into `(image, ingredient_list)` pairs, build a vocabulary of the ~
 
 ---
 
-## The Five Experiments
+## The Six Experiments
 
 ### Experiment 1 — Zero-shot Baseline
 We freeze CLIP completely and run inference with no training. For each ingredient, we construct a simple text prompt (`"tomato"`, `"cheese"`, etc.), encode it, and rank ingredients by cosine similarity to the image embedding. This tells us how much CLIP already knows about food ingredients out of the box.
@@ -67,13 +67,21 @@ The text input is built directly from the recipe's ingredient list: `"ingredient
 
 After training, evaluation reuses the zero-shot pipeline from Experiment 1 — no classification head needed.
 
-### Experiment 5 — Backbone Ablation (SigLIP vs CLIP)
+### Experiment 5 — Prompt Generalization after LoRA Fine-tuning
+After LoRA contrastive fine-tuning (Experiment 4), we re-run the full prompt engineering comparison from Experiment 2 — all 8 templates (A–H) plus ENS4 and ENS7 ensembles — on the fine-tuned model. This answers two questions:
+
+1. Does LoRA fine-tuning improve performance uniformly across all prompt styles, or only certain ones?
+2. Does the best prompt change after domain adaptation (e.g. does the single-word prompt A become more competitive once the model is food-adapted)?
+
+Results are reported as a side-by-side table: zero-shot score vs post-LoRA score for each prompt.
+
+### Experiment 6 — Backbone Ablation (SigLIP vs CLIP)
 To isolate whether gains from Experiment 4 come from the architecture or the loss function, we run two variants:
 
-- **5a** — SigLIP ViT-B/16 with sigmoid multi-label loss
-- **5b** — CLIP ViT-B/32 with sigmoid loss (same architecture as Experiments 1–4, different loss)
+- **6a** — SigLIP ViT-B/16 with sigmoid multi-label loss
+- **6b** — CLIP ViT-B/32 with sigmoid loss (same architecture as Experiments 1–5, different loss)
 
-Comparing 5a vs 5b isolates the architecture effect; comparing 5b vs Experiment 4 isolates the loss function effect.
+Comparing 6a vs 6b isolates the architecture effect; comparing 6b vs Experiment 4 isolates the loss function effect.
 
 ---
 
@@ -89,7 +97,9 @@ src/visualization/      → Grad-CAM: shows which image regions drove each predi
 src/run_experiment1.py  → runs Experiment 1
 src/run_experiment2.py  → runs Experiment 2
 src/run_experiment3.py  → runs Experiment 3
-src/run_experiment4.py  → runs Experiment 4 (planned)
+src/run_experiment4.py  → runs Experiment 4
+src/run_experiment5.py  → runs Experiment 5 (planned)
+src/run_experiment6.py  → runs Experiment 6 (planned)
 src/run_visualization.py→ generates heatmap overlays
 ```
 
