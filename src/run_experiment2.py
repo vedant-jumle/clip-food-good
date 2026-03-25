@@ -26,7 +26,8 @@ from src.models.clip_wrapper import CLIPWrapper
 DET_INGRS = "data/recipe1m/det_ingrs.json"
 LAYER1 = "data/recipe1m/layer1.json"
 LAYER2 = "data/recipe1m/layer2.json"
-IMAGE_ROOT = "data/recipe1m/0"
+IMAGE_ROOT = os.environ.get("RECIPE1M_IMAGE_ROOT", "data/recipe1m/0")
+NUM_WORKERS = int(os.environ.get("RECIPE1M_NUM_WORKERS", "0"))
 
 NON_VISUAL = {
     "salt",
@@ -77,7 +78,7 @@ def build_test_loader() -> tuple[list[dict], list[str], DataLoader]:
         dataset,
         batch_size=BATCH_SIZE,
         shuffle=False,
-        num_workers=0,
+        num_workers=NUM_WORKERS,
         pin_memory=torch.cuda.is_available(),
     )
     return recipes, vocab, loader

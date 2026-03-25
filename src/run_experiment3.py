@@ -23,7 +23,8 @@ from src.training.trainer import train
 DET_INGRS = "data/recipe1m/det_ingrs.json"
 LAYER1 = "data/recipe1m/layer1.json"
 LAYER2 = "data/recipe1m/layer2.json"
-IMAGE_ROOT = "data/recipe1m/0"
+IMAGE_ROOT = os.environ.get("RECIPE1M_IMAGE_ROOT", "data/recipe1m/0")
+NUM_WORKERS = int(os.environ.get("RECIPE1M_NUM_WORKERS", "0"))
 
 # Non-visual ingredients
 NON_VISUAL = {
@@ -182,13 +183,13 @@ def main() -> None:
         train_dataset,
         batch_size=32,
         shuffle=True,
-        num_workers=0,
+        num_workers=NUM_WORKERS,
     )
     test_loader = DataLoader(
         test_dataset,
         batch_size=32,
         shuffle=False,
-        num_workers=0,
+        num_workers=NUM_WORKERS,
     )
 
     print("Loading CLIP...")
