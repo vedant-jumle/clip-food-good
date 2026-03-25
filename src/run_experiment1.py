@@ -65,7 +65,7 @@ def build_test_loader() -> tuple[list[dict], list[str], DataLoader]:
         partition="test",
         require_images=True,
     )
-    vocab = build_vocab(recipes, top_n=200, min_freq=2, exclude=NON_VISUAL)
+    vocab = build_vocab(recipes, top_n=500, min_freq=2, exclude=NON_VISUAL)
 
     if not recipes:
         raise RuntimeError("No test recipes were loaded.")
