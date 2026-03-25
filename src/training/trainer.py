@@ -112,6 +112,7 @@ def train(
         epoch_losses.append(epoch_loss)
         epoch_bar.set_postfix(loss=f"{epoch_loss:.4f}")
 
+    clip.model.eval()
     return epoch_losses
 
 def train_contrastive(
