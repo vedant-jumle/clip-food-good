@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import sys
 from pathlib import Path
@@ -24,7 +25,14 @@ from src.training.trainer import train_contrastive
 DET_INGRS = "data/recipe1m/det_ingrs.json"
 LAYER1 = "data/recipe1m/layer1.json"
 LAYER2 = "data/recipe1m/layer2.json"
-IMAGE_ROOT = "data/recipe1m/0"
+IMAGE_ROOT = os.environ.get("RECIPE1M_IMAGE_ROOT", "data/recipe1m/0")
+NUM_WORKERS = int(os.environ.get("RECIPE1M_NUM_WORKERS", "0"))
+BATCH_SIZE = 64
+EPOCHS = 5
+LR = 1e-4
+LORA_RANK = 32
+LORA_ALPHA = 1.0
+TOP_K = 5
 
 NON_VISUAL = {
     "salt",
@@ -48,14 +56,6 @@ NON_VISUAL = {
     "cumin",
     "vinegar",
 }
-
-BATCH_SIZE = 64
-EPOCHS = 5
-LR = 1e-4
-LORA_RANK = 32
-LORA_ALPHA = 1.0
-TOP_K = 5
-
 
 def build_loaders(device: str) -> tuple[list[str], DataLoader, DataLoader]:
     train_recipes = load_recipes(
@@ -92,14 +92,14 @@ def build_loaders(device: str) -> tuple[list[str], DataLoader, DataLoader]:
         train_dataset,
         batch_size=BATCH_SIZE,
         shuffle=True,
-        num_workers=0,
+        num_workers=NUM_WORKERS,
         pin_memory=pin_memory,
     )
     test_loader = DataLoader(
         test_dataset,
         batch_size=BATCH_SIZE,
         shuffle=False,
-        num_workers=0,
+        num_workers=NUM_WORKERS,
         pin_memory=pin_memory,
     )
 
@@ -144,6 +144,8 @@ def main() -> None:
     print(f"Train samples: {len(train_loader.dataset)}")
     print(f"Test samples:  {len(test_loader.dataset)}")
     print(f"Vocab size:    {len(vocab)}")
+    print(f"Image root:     {IMAGE_ROOT}")
+    print(f"Num workers:    {NUM_WORKERS}")
     print(f"LoRA rank:     {LORA_RANK}")
     print(f"LoRA alpha:    {LORA_ALPHA}")
     print()
@@ -209,7 +211,6 @@ def main() -> None:
     }
 
     with open("outputs/experiment4_results.json", "w", encoding="utf-8") as f:
-        import json
         json.dump(results, f, indent=2)
 
     print("\nResults saved to outputs/experiment4_results.json")
