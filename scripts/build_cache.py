@@ -32,4 +32,7 @@ if __name__ == "__main__":
         partition=None,
         require_images=False,
     )
+    total_images = sum(len(r["image_paths"]) for r in recipes)
+    with_images = sum(1 for r in recipes if r["image_paths"])
     print(f"Done. {len(recipes):,} recipes indexed.")
+    print(f"      {with_images:,} recipes with images, {total_images:,} total images.")
