@@ -16,7 +16,7 @@ REPO=/scratch/vvjumle/clip-food-good
 
 module load 2025
 module load miniconda3
-module load cuda/12.6
+module load cuda
 conda activate CV
 
 export TORCH_HOME=/scratch/vvjumle/models
