@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import hashlib
 import json
+import pickle
 import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -87,6 +89,11 @@ def index_layer2(layer2_path: str | Path) -> Dict[str, List[str]]:
     return index
 
 
+def _cache_path(image_root: str | Path, cache_dir: Path) -> Path:
+    key = hashlib.md5(str(Path(image_root).resolve()).encode()).hexdigest()[:8]
+    return cache_dir / f"recipes_cache_{key}.pkl"
+
+
 def build_image_index(image_root: str | Path) -> Dict[str, str]:
     """Scan image_root once and return a dict mapping image stem -> full path."""
     index: Dict[str, str] = {}
@@ -104,43 +111,52 @@ def load_recipes(
     partition: Optional[str] = None,
     require_images: bool = True,
 ) -> List[Dict[str, Any]]:
-    det_index = index_det_ingrs(det_ingrs_path)
-    layer_index = index_layer1(layer1_path)
-    layer2_index = index_layer2(layer2_path)
-    image_index = build_image_index(image_root)
+    cache_dir = Path(image_root).parent / ".cache"
+    cache_file = _cache_path(image_root, cache_dir)
 
-    recipes: List[Dict[str, Any]] = []
+    if cache_file.exists():
+        print(f"Loading recipes from cache: {cache_file}")
+        with open(cache_file, "rb") as f:
+            all_recipes: List[Dict[str, Any]] = pickle.load(f)
+    else:
+        print("Building recipe index (first run, this may take a while)...")
+        det_index = index_det_ingrs(det_ingrs_path)
+        layer_index = index_layer1(layer1_path)
+        layer2_index = index_layer2(layer2_path)
+        image_index = build_image_index(image_root)
 
-    shared_ids = det_index.keys() & layer_index.keys()
-
-    for recipe_id in shared_ids:
-        meta = layer_index[recipe_id]
-
-        if partition is not None and meta["partition"] != partition:
-            continue
-
-        ingredients = det_index[recipe_id]
-        if not ingredients:
-            continue
-
-        image_paths = [
-            image_index[img_id]
-            for img_id in layer2_index.get(recipe_id, [])
-            if img_id in image_index
-        ]
-
-        if require_images and not image_paths:
-            continue
-
-        recipes.append(
-            {
+        all_recipes = []
+        for recipe_id in det_index.keys() & layer_index.keys():
+            meta = layer_index[recipe_id]
+            ingredients = det_index[recipe_id]
+            if not ingredients:
+                continue
+            image_paths = [
+                image_index[img_id]
+                for img_id in layer2_index.get(recipe_id, [])
+                if img_id in image_index
+            ]
+            all_recipes.append({
                 "id": recipe_id,
                 "title": meta["title"],
                 "partition": meta["partition"],
                 "ingredients": ingredients,
                 "image_paths": image_paths,
-            }
-        )
+            })
+
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        with open(cache_file, "wb") as f:
+            pickle.dump(all_recipes, f)
+        print(f"Cached {len(all_recipes):,} recipes to {cache_file}")
+
+    # Filter by partition and require_images after loading from cache
+    recipes = []
+    for recipe in all_recipes:
+        if partition is not None and recipe["partition"] != partition:
+            continue
+        if require_images and not recipe["image_paths"]:
+            continue
+        recipes.append(recipe)
 
     return recipes
 
