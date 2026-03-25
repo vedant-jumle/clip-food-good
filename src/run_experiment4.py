@@ -13,7 +13,7 @@ if __package__ in (None, ""):
     sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from src.data.dataset import Recipe1MDataset
-from src.data.recipe1m import load_recipes
+from src.data.recipe1m import expand_recipes, load_recipes
 from src.data.vocab import build_vocab
 from src.experiments.metrics import f1_at_k, precision_at_k, recall_at_k
 from src.experiments.predict import compute_scores, predict_topk
@@ -83,8 +83,10 @@ def build_loaders(device: str) -> tuple[list[str], DataLoader, DataLoader]:
     if not vocab:
         raise RuntimeError("Vocabulary is empty after filtering.")
 
-    train_dataset = Recipe1MDataset(recipes=train_recipes, vocab=vocab)
-    test_dataset = Recipe1MDataset(recipes=test_recipes, vocab=vocab)
+    train_samples = expand_recipes(train_recipes)
+    test_samples = expand_recipes(test_recipes)
+    train_dataset = Recipe1MDataset(recipes=train_samples, vocab=vocab)
+    test_dataset = Recipe1MDataset(recipes=test_samples, vocab=vocab)
 
     pin_memory = device.startswith("cuda")
 

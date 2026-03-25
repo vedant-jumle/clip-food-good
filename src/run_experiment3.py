@@ -13,7 +13,7 @@ if __package__ in (None, ""):
     sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from src.data.dataset import Recipe1MDataset
-from src.data.recipe1m import load_recipes
+from src.data.recipe1m import expand_recipes, load_recipes
 from src.data.vocab import build_vocab
 from src.models.clip_wrapper import CLIPWrapper
 from src.models.ingredient_head import IngredientHead
@@ -176,8 +176,10 @@ def main() -> None:
     print(f"Vocab size: {len(vocab)}")
 
     print("Building datasets and dataloaders...")
-    train_dataset = Recipe1MDataset(train_recipes, vocab)
-    test_dataset = Recipe1MDataset(test_recipes, vocab)
+    train_samples = expand_recipes(train_recipes)
+    test_samples = expand_recipes(test_recipes)
+    train_dataset = Recipe1MDataset(train_samples, vocab)
+    test_dataset = Recipe1MDataset(test_samples, vocab)
 
     train_loader = DataLoader(
         train_dataset,

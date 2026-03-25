@@ -188,14 +188,34 @@ def main() -> None:
     # ------------------------------------------------------------------ #
     # 8. Images per recipe distribution
     # ------------------------------------------------------------------ #
-    section("8. Images available per recipe (layer2)")
-    img_per_recipe = Counter(
-        len(layer2_index.get(rid, []))
+    section("8. Images available per recipe (downloaded)")
+    imgs_per_recipe_counts = [
+        len([
+            img_id for img_id in layer2_index.get(rid, [])
+            if img_id in image_index
+        ])
         for part_ids in partitions.values()
         for rid in part_ids
-    )
-    for n_imgs in sorted(img_per_recipe):
-        print(f"  {n_imgs} image(s): {img_per_recipe[n_imgs]:>8,} recipes")
+    ]
+    total_samples = sum(imgs_per_recipe_counts)
+    sorted_ipr = sorted(imgs_per_recipe_counts)
+    ipr_mean   = sum(sorted_ipr) / len(sorted_ipr) if sorted_ipr else 0
+    ipr_median = sorted_ipr[len(sorted_ipr) // 2]
+    ipr_p25    = sorted_ipr[len(sorted_ipr) // 4]
+    ipr_p75    = sorted_ipr[3 * len(sorted_ipr) // 4]
+    ipr_min    = sorted_ipr[0]
+    ipr_max    = sorted_ipr[-1]
+
+    print(f"  Mean images/recipe   : {ipr_mean:>8.2f}")
+    print(f"  Median               : {ipr_median:>8}")
+    print(f"  Min / Max            : {ipr_min:>4} / {ipr_max}")
+    print(f"  25th / 75th pct      : {ipr_p25:>4} / {ipr_p75}")
+    print(f"  Total samples (flat) : {total_samples:>8,}  (recipes × images)")
+
+    img_per_recipe = Counter(imgs_per_recipe_counts)
+    print(f"\n  Distribution (top 20 buckets):")
+    for n_imgs in sorted(img_per_recipe)[:20]:
+        print(f"  {n_imgs:>4} image(s): {img_per_recipe[n_imgs]:>8,} recipes")
 
     print(f"\n{SEP}\n  Done.\n{SEP}\n")
 

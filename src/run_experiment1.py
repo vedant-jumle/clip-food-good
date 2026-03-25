@@ -13,7 +13,7 @@ if __package__ in (None, ""):
     sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from src.data.dataset import Recipe1MDataset
-from src.data.recipe1m import load_recipes
+from src.data.recipe1m import expand_recipes, load_recipes
 from src.data.vocab import build_vocab
 import torch.nn.functional as F
 
@@ -66,13 +66,14 @@ def build_test_loader() -> tuple[list[dict], list[str], DataLoader]:
         require_images=True,
     )
     vocab = build_vocab(recipes, top_n=500, min_freq=2, exclude=NON_VISUAL)
+    samples = expand_recipes(recipes)
 
     if not recipes:
         raise RuntimeError("No test recipes were loaded.")
     if not vocab:
         raise RuntimeError("Vocabulary is empty after filtering.")
 
-    dataset = Recipe1MDataset(recipes=recipes, vocab=vocab)
+    dataset = Recipe1MDataset(recipes=samples, vocab=vocab)
     loader = DataLoader(
         dataset,
         batch_size=BATCH_SIZE,

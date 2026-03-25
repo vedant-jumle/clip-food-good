@@ -123,13 +123,13 @@ def load_recipes(
         if not ingredients:
             continue
 
-        image_path = None
-        for img_id in layer2_index.get(recipe_id, []):
-            if img_id in image_index:
-                image_path = image_index[img_id]
-                break
+        image_paths = [
+            image_index[img_id]
+            for img_id in layer2_index.get(recipe_id, [])
+            if img_id in image_index
+        ]
 
-        if require_images and image_path is None:
+        if require_images and not image_paths:
             continue
 
         recipes.append(
@@ -138,8 +138,22 @@ def load_recipes(
                 "title": meta["title"],
                 "partition": meta["partition"],
                 "ingredients": ingredients,
-                "image_path": image_path,
+                "image_paths": image_paths,
             }
         )
 
     return recipes
+
+
+def expand_recipes(recipes: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Expand each recipe into one entry per available image.
+
+    Each returned entry is a copy of the recipe dict with a single
+    ``"image_path"`` key (str) instead of ``"image_paths"`` (list),
+    so it is compatible with Recipe1MDataset without any changes.
+    """
+    samples: List[Dict[str, Any]] = []
+    for recipe in recipes:
+        for path in recipe["image_paths"]:
+            samples.append({**recipe, "image_path": path})
+    return samples
