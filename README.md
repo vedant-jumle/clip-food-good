@@ -26,3 +26,7 @@ Run the dataset smoke test:
 ```powershell
 python src/data/dataset.py
 ```
+
+### Blog
+
+https://hackmd.io/xZfn0ZMOSlaFppC6ttLDIg
