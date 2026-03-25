@@ -29,7 +29,7 @@ mkdir -p $REPO/outputs
 # Load modules and activate env
 module load 2025
 module load miniconda3
-conda activate ir-pipeline
+conda activate CV
 
 # Install dependencies
 echo "Installing requirements..."

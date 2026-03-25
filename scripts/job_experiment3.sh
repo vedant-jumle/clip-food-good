@@ -16,7 +16,7 @@ REPO=/scratch/vvjumle/clip-food-good
 
 module load 2025
 module load miniconda3
-conda activate ir-pipeline
+conda activate CV
 
 export TORCH_HOME=/scratch/vvjumle/models
 export RECIPE1M_IMAGE_ROOT=/scratch/vvjumle/clip-food-good/data/recipe1m
