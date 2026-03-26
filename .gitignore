@@ -215,3 +215,4 @@ src/experiments/tests
 outputs/
 
 *.eml
+.vscode/

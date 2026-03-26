@@ -45,7 +45,7 @@ def train_contrastive_multigpu(
     best_loss = float("inf")
     epochs_without_improvement = 0
 
-    clip.model.train()
+    base_model.train()
 
     epoch_bar = tqdm(range(epochs), desc="Contrastive training", leave=True)
     for epoch in epoch_bar:
@@ -61,11 +61,11 @@ def train_contrastive_multigpu(
 
             optimizer.zero_grad()
 
-            image_features = clip.model.encode_image(images)
+            image_features = base_model.encode_image(images)
             image_features = F.normalize(image_features, dim=-1)
 
             text_tokens = clip.tokenizer(texts).to(device)
-            text_features = clip.model.encode_text(text_tokens)
+            text_features = base_model.encode_text(text_tokens)
             text_features = F.normalize(text_features, dim=-1)
 
             loss = criterion(image_features, text_features, base_model.logit_scale)
@@ -93,4 +93,5 @@ def train_contrastive_multigpu(
             tqdm.write(f"Early stopping at epoch {epoch + 1} (no improvement for {patience} epochs)")
             break
 
+    base_model.eval()
     return epoch_losses
