@@ -1,14 +1,14 @@
 #!/bin/bash
-#SBATCH --job-name=clip_food_exp4
+#SBATCH --job-name=clip_food_exp4_mg
 #SBATCH --partition=gpu
 #SBATCH --time=24:00:00
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=8
 #SBATCH --mem-per-cpu=4G
-#SBATCH --gpus-per-task=1
+#SBATCH --gpus-per-task=2
 #SBATCH --account=Education-EEMCS-MSc-DSAIT
-#SBATCH --output=/scratch/vvjumle/logs/exp4_%j.out
-#SBATCH --error=/scratch/vvjumle/logs/exp4_%j.err
+#SBATCH --output=/scratch/vvjumle/logs/exp4_mg_%j.out
+#SBATCH --error=/scratch/vvjumle/logs/exp4_mg_%j.err
 
 set -e
 
@@ -22,11 +22,11 @@ conda activate CV
 export TORCH_HOME=/scratch/vvjumle/models
 export RECIPE1M_IMAGE_ROOT=/scratch/vvjumle/clip-food-good/data/recipe1m
 export RECIPE1M_LAYER2=/scratch/vvjumle/clip-food-good/data/recipe1m/layer2+.json
-export RECIPE1M_NUM_WORKERS=4
+export RECIPE1M_NUM_WORKERS=8
 export RECIPE1M_MAX_TRAIN_SAMPLES=150000
 
 cd $REPO
 mkdir -p outputs
 
-echo "=== Experiment 4: LoRA Contrastive Fine-tuning ==="
-python -m src.run_experiment4
+echo "=== Experiment 4 (Multi-GPU): LoRA Contrastive Fine-tuning ==="
+python -m src.run_experiment4_multigpu

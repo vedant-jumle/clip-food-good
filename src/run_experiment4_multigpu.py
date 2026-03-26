@@ -19,7 +19,7 @@ from src.experiments.metrics import f1_at_k, precision_at_k, recall_at_k
 from src.experiments.predict import compute_scores, predict_topk
 from src.experiments.prompts import make_prompts
 from src.models.clip_wrapper import CLIPWrapper
-from src.training.trainer import train_contrastive
+from src.training.trainer_multigpu import train_contrastive_multigpu
 
 
 DET_INGRS = "data/recipe1m/det_ingrs.json"
@@ -114,7 +114,8 @@ def build_loaders(device: str) -> tuple[list[str], DataLoader, DataLoader]:
 
 
 def evaluate(clip: CLIPWrapper, loader: DataLoader, vocab: list[str]) -> dict[str, float]:
-    clip.model.eval()
+    base_model = clip.model.module if hasattr(clip.model, "module") else clip.model
+    base_model.eval()
 
     # Prompt B was best in Experiment 2
     text_embeddings = clip.encode_text(make_prompts(vocab, "B"))
@@ -147,7 +148,7 @@ def main() -> None:
     vocab, train_loader, test_loader = build_loaders(device=device)
     clip = CLIPWrapper(device=device)
 
-    print("=== Experiment 4: LoRA Contrastive Fine-tuning ===")
+    print("=== Experiment 4 (Multi-GPU): LoRA Contrastive Fine-tuning ===")
     print(f"Train samples: {len(train_loader.dataset)}")
     print(f"Test samples:  {len(test_loader.dataset)}")
     print(f"Vocab size:    {len(vocab)}")
@@ -155,6 +156,7 @@ def main() -> None:
     print(f"Num workers:    {NUM_WORKERS}")
     print(f"LoRA rank:     {LORA_RANK}")
     print(f"LoRA alpha:    {LORA_ALPHA}")
+    print(f"GPUs available: {torch.cuda.device_count()}")
     print()
 
     # Before fine-tuning
@@ -170,7 +172,7 @@ def main() -> None:
 
     # LoRA contrastive training
     print("Training with LoRA contrastive loss...")
-    losses = train_contrastive(
+    losses = train_contrastive_multigpu(
         clip=clip,
         dataloader=train_loader,
         vocab=vocab,
@@ -185,7 +187,6 @@ def main() -> None:
 
     # After fine-tuning
     print("Evaluating after fine-tuning...")
-    clip.model.eval()
     after = evaluate(clip, test_loader, vocab)
 
     print("\n=== Results ===")
@@ -202,7 +203,7 @@ def main() -> None:
 
     os.makedirs("outputs", exist_ok=True)
     results = {
-        "experiment": "experiment4_lora_contrastive",
+        "experiment": "experiment4_lora_contrastive_multigpu",
         "train_samples": len(train_loader.dataset),
         "test_samples": len(test_loader.dataset),
         "vocab_size": len(vocab),
@@ -215,12 +216,13 @@ def main() -> None:
         "after": {k: round(v, 4) for k, v in after.items()},
         "eval_prompt": "B",
         "top_k": TOP_K,
+        "num_gpus": torch.cuda.device_count(),
     }
 
-    with open("outputs/experiment4_results.json", "w", encoding="utf-8") as f:
+    with open("outputs/experiment4_multigpu_results.json", "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2)
 
-    print("\nResults saved to outputs/experiment4_results.json")
+    print("\nResults saved to outputs/experiment4_multigpu_results.json")
 
 
 if __name__ == "__main__":
