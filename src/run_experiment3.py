@@ -25,6 +25,7 @@ LAYER1 = "data/recipe1m/layer1.json"
 LAYER2 = os.environ.get("RECIPE1M_LAYER2", "data/recipe1m/layer2+.json")
 IMAGE_ROOT = os.environ.get("RECIPE1M_IMAGE_ROOT", "data/recipe1m/0")
 NUM_WORKERS = int(os.environ.get("RECIPE1M_NUM_WORKERS", "0"))
+MAX_TRAIN_SAMPLES = int(os.environ.get("RECIPE1M_MAX_TRAIN_SAMPLES", 0)) or None
 
 # Non-visual ingredients
 NON_VISUAL = {
@@ -177,6 +178,10 @@ def main() -> None:
 
     print("Building datasets and dataloaders...")
     train_samples = expand_recipes(train_recipes)
+    if MAX_TRAIN_SAMPLES and len(train_samples) > MAX_TRAIN_SAMPLES:
+        import random
+        random.seed(42)
+        train_samples = random.sample(train_samples, MAX_TRAIN_SAMPLES)
     test_samples = expand_recipes(test_recipes)
     train_dataset = Recipe1MDataset(train_samples, vocab)
     test_dataset = Recipe1MDataset(test_samples, vocab)

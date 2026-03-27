@@ -23,6 +23,7 @@ export TORCH_HOME=/scratch/vvjumle/models
 export RECIPE1M_IMAGE_ROOT=/scratch/vvjumle/clip-food-good/data/recipe1m
 export RECIPE1M_LAYER2=/scratch/vvjumle/clip-food-good/data/recipe1m/layer2+.json
 export RECIPE1M_NUM_WORKERS=4
+export RECIPE1M_MAX_TRAIN_SAMPLES=150000
 
 cd $REPO
 mkdir -p outputs
