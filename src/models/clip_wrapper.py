@@ -35,7 +35,8 @@ class CLIPWrapper:
             L2-normalized embeddings of shape (N, D).
         """
         images = images.to(self.device)
-        embeddings = self.model.encode_image(images)
+        base = self.model.module if hasattr(self.model, "module") else self.model
+        embeddings = base.encode_image(images)
         return F.normalize(embeddings, dim=-1)
 
     @torch.no_grad()
@@ -49,10 +50,12 @@ class CLIPWrapper:
             L2-normalized embeddings of shape (N, D).
         """
         tokens = self.tokenizer(texts).to(self.device)
-        embeddings = self.model.encode_text(tokens)
+        base = self.model.module if hasattr(self.model, "module") else self.model
+        embeddings = base.encode_text(tokens)
         return F.normalize(embeddings, dim=-1)
 
     @property
     def embedding_dim(self) -> int:
         """Embedding dimensionality (512 for ViT-B-32)."""
-        return self.model.visual.output_dim
+        base = self.model.module if hasattr(self.model, "module") else self.model
+        return base.visual.output_dim

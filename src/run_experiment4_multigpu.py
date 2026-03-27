@@ -29,7 +29,7 @@ IMAGE_ROOT = os.environ.get("RECIPE1M_IMAGE_ROOT", "data/recipe1m/0")
 NUM_WORKERS = int(os.environ.get("RECIPE1M_NUM_WORKERS", "0"))
 MAX_TRAIN_SAMPLES = int(os.environ.get("RECIPE1M_MAX_TRAIN_SAMPLES", 0)) or None
 BATCH_SIZE = 128
-EPOCHS = 20
+EPOCHS = int(os.environ.get("RECIPE1M_EPOCHS", 20))
 LR = 1e-4
 LORA_RANK = 32
 LORA_ALPHA = 1.0
@@ -114,9 +114,6 @@ def build_loaders(device: str) -> tuple[list[str], DataLoader, DataLoader]:
 
 
 def evaluate(clip: CLIPWrapper, loader: DataLoader, vocab: list[str]) -> dict[str, float]:
-    base_model = clip.model.module if hasattr(clip.model, "module") else clip.model
-    base_model.eval()
-
     # Prompt B was best in Experiment 2
     text_embeddings = clip.encode_text(make_prompts(vocab, "B"))
 
