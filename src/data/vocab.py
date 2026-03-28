@@ -25,3 +25,29 @@ def build_vocab(
         items = items[:top_n]
 
     return [token for token, _ in items]
+
+
+def build_vocab_with_freqs(
+    recipes: Sequence[dict],
+    top_n: Optional[int] = None,
+    min_freq: int = 1,
+    exclude: Optional[Iterable[str]] = None,
+) -> tuple[List[str], List[int]]:
+    """Same as build_vocab but also returns per-ingredient frequencies."""
+    exclude_set = set(exclude or [])
+    counter = Counter()
+
+    for recipe in recipes:
+        for ing in recipe.get("ingredients", []):
+            if ing and ing not in exclude_set:
+                counter[ing] += 1
+
+    items = [(token, freq) for token, freq in counter.items() if freq >= min_freq]
+    items.sort(key=lambda x: (-x[1], x[0]))
+
+    if top_n is not None:
+        items = items[:top_n]
+
+    vocab = [token for token, _ in items]
+    freqs = [freq for _, freq in items]
+    return vocab, freqs

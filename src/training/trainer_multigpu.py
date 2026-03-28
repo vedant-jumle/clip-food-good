@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 import torch
 import torch.nn.functional as F
 from torch.optim import AdamW
@@ -24,6 +25,7 @@ def train_contrastive_multigpu(
     device: str = "cuda",
     patience: int = 5,
     min_delta: float = 0.001,
+    checkpoint_path: str = "outputs/checkpoints/exp4_lora_best.pt",
 ) -> list[float]:
     apply_lora_to_clip(clip.model, rank=rank, alpha=alpha)
     clip.model.to(device)
@@ -84,6 +86,9 @@ def train_contrastive_multigpu(
         if avg_loss < best_loss - min_delta:
             best_loss = avg_loss
             epochs_without_improvement = 0
+            Path(checkpoint_path).parent.mkdir(parents=True, exist_ok=True)
+            torch.save(base_model.state_dict(), checkpoint_path)
+            tqdm.write(f"Checkpoint saved (loss={best_loss:.4f}) -> {checkpoint_path}")
         else:
             epochs_without_improvement += 1
 
