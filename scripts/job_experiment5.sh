@@ -5,7 +5,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem-per-cpu=4G
-#SBATCH --gpus-per-task=3
+#SBATCH --gpus-per-task=2
 #SBATCH --account=Education-EEMCS-MSc-DSAIT
 #SBATCH --output=/scratch/vvjumle/logs/exp5_%j.out
 #SBATCH --error=/scratch/vvjumle/logs/exp5_%j.err
