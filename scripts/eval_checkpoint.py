@@ -8,6 +8,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import sys
 from pathlib import Path
@@ -67,6 +68,7 @@ def main():
     parser.add_argument("--image-root", default=os.environ.get("RECIPE1M_IMAGE_ROOT", "data/recipe1m/0"))
     parser.add_argument("--num-workers", type=int, default=0)
     parser.add_argument("--batch-size",  type=int, default=128)
+    parser.add_argument("--output",      default="outputs/eval_checkpoint_results.json")
     args = parser.parse_args()
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -92,15 +94,30 @@ def main():
     # Load model
     clip = CLIPWrapper(device=device)
     state = torch.load(args.checkpoint, map_location=device)
-    clip.model.visual.load_state_dict(state)
+    # Checkpoint is full model state_dict — load directly into clip.model
+    clip.model.load_state_dict(state)
     print("Checkpoint loaded.\n")
 
     # Eval all prompts
     print(f"{'Prompt':<8} {'P@1':>6} {'P@5':>6} {'R@5':>6} {'F1@5':>6}")
     print("-" * 38)
+    results = []
     for prompt_type in prompt_templates:
         m = evaluate(clip, loader, vocab, prompt_type)
         print(f"{prompt_type:<8} {m['P@1']:.3f}  {m['P@5']:.3f}  {m['R@5']:.3f}  {m['F1@5']:.3f}")
+        results.append({"prompt": prompt_type, **{k: round(v, 4) for k, v in m.items()}})
+
+    output = {
+        "checkpoint": args.checkpoint,
+        "test_samples": len(dataset),
+        "vocab_size": len(vocab),
+        "top_k": TOP_K,
+        "results": results,
+    }
+    Path(args.output).parent.mkdir(parents=True, exist_ok=True)
+    with open(args.output, "w") as f:
+        json.dump(output, f, indent=2)
+    print(f"\nResults saved to {args.output}")
 
 
 if __name__ == "__main__":
