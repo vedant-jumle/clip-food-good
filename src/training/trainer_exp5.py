@@ -85,6 +85,7 @@ def train_exp5(
     optimizer = AdamW(
         [p for p in base_model.visual.parameters() if p.requires_grad],
         lr=lr,
+        weight_decay=0.01,
     )
 
     # Build per-ingredient negative weights: max_freq / freq[i]
